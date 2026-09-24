@@ -78,4 +78,4 @@ To re-render after a UI change, serve the project (`npm run dev`) and open `figm
 
 ## After publishing
 
-Figma assigns a permanent plugin ID. Put it in `figma-plugin/manifest.json` (replacing `css-toolkit-dev`), rebuild and commit. Every future update must be published with that ID.
+Published with plugin ID `1684920820196716785`, which is set in `figma-plugin/manifest.json`. Every future update must be published with that ID.

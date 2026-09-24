@@ -17,6 +17,7 @@ test("plugin manifest points at the built files", () => {
   assert.equal(manifest.main, "code.js");
   assert.equal(manifest.ui, "ui.html");
   assert.ok(manifest.editorType.includes("figma"));
+  assert.equal(manifest.id, "1684920820196716785", "Published Community ID: updates must keep it");
 });
 
 test("committed figma-plugin/ui.html is up to date with the source", () => {

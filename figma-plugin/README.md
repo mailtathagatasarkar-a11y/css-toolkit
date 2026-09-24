@@ -25,6 +25,6 @@ No install or build needed: `ui.html` is committed and ready.
 
 `code.js` runs in Figma's main thread. It reads the selection (size, font size, `getCSSAsync()` and the top-level frame) and resizes the window to fit.
 
-## Publishing to the Community
+## Publishing updates
 
-When publishing, Figma assigns a real plugin ID. Replace `"id": "css-toolkit-dev"` in `manifest.json` with it, then rebuild.
+The plugin is published on the Figma Community with ID `1684920820196716785` (in `manifest.json`; a test guards it). To ship an update: rebuild, then in Figma choose **Plugins → Manage plugins → CSS Toolkit → Publish new version**.
