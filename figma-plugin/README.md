@@ -9,13 +9,15 @@ The six CSS Toolkit tools inside Figma, filled from whatever layer you select. T
 
 ## Try it in Figma (desktop app)
 
-1. From the project root, run `npm run build:plugin`. This writes `figma-plugin/ui.html`.
+No install or build needed: `ui.html` is committed and ready.
+
+1. Download the repo: **Code → Download ZIP** on https://github.com/mailtathagatasarkar-a11y/css-toolkit, then unzip it.
 2. In Figma: **Plugins → Development → Import plugin from manifest…** and pick `figma-plugin/manifest.json`.
 3. Run it from **Plugins → Development → CSS Toolkit**. It also shows up in Dev Mode's plugin list.
 
 ## How it's built
 
-`ui.html` is generated, so don't edit it by hand. Figma loads a plugin UI as a single HTML string, so `scripts/build-plugin.mjs` inlines the site's calculator markup, `styles.css` and the shared logic (`logic.js`, `tailwind.js`, `inline.js`, `tools.js`, `app.js`), plus the plugin-only files in `src/`:
+`ui.html` is generated, so don't edit it by hand. After changing any source, run `npm run build:plugin` and commit the result; a test fails if the committed file is out of date. Figma loads a plugin UI as a single HTML string, so `scripts/build-plugin.mjs` inlines the site's calculator markup, `styles.css` and the shared logic (`logic.js`, `tailwind.js`, `inline.js`, `tools.js`, `app.js`), plus the plugin-only files in `src/`:
 
 - `src/bridge.js`: talks to Figma and fills the tools from the selection.
 - `src/plugin.css`: layout adjustments for the plugin window.

@@ -18,3 +18,9 @@ test("plugin manifest points at the built files", () => {
   assert.equal(manifest.ui, "ui.html");
   assert.ok(manifest.editorType.includes("figma"));
 });
+
+test("committed figma-plugin/ui.html is up to date with the source", () => {
+  const normalise = text => text.replace(/\r\n/g, "\n");
+  const committed = normalise(readFileSync(new URL("./figma-plugin/ui.html", import.meta.url), "utf8"));
+  assert.equal(committed, normalise(buildPlugin()), "Run npm run build:plugin and commit figma-plugin/ui.html");
+});

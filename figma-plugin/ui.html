@@ -1,0 +1,1482 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  color-scheme: dark;
+  font-family: "DM Sans", sans-serif;
+  background: #15191c;
+  color: #f5f4ef;
+  --ink: #1c1d21;
+  --muted: #8c8d90;
+  --accent: #f4b506;
+  --input-accent: #ffd801;
+  --on-accent: #111;
+  --eyebrow-accent: #ffd801;
+  --ambient-top: #3c3528;
+  --ambient-mid: #25282b;
+  /* Per-tool palette for the All tools cards: fill, text on dark, text on fill. */
+  --c-rem: #f4b506; --t-rem: #ffd801; --i-rem: #111;
+  --c-em: #ff5102; --t-em: #ff783d; --i-em: #111;
+  --c-vw: #b2d8d9; --t-vw: #b2d8d9; --i-vw: #111;
+  --c-vh: #014a2c; --t-vh: #a9dec4; --i-vh: #effff7;
+  --c-inline: #9d92b8; --t-inline: #bdb2e0; --i-inline: #111;
+  --c-tailwind: #8f8b1c; --t-tailwind: #cdc85a; --i-tailwind: #111;
+}
+
+:root[data-mode="em"] {
+  --accent: #ff5102;
+  --input-accent: #ff6a28;
+  --eyebrow-accent: #ff783d;
+  --ambient-top: #3a2d2c;
+  --ambient-mid: #25282b;
+}
+
+:root[data-mode="vw"] {
+  --accent: #b2d8d9;
+  --input-accent: #b2d8d9;
+  --eyebrow-accent: #b2d8d9;
+  --ambient-top: #293c40;
+  --ambient-mid: #222b2e;
+}
+
+:root[data-mode="vh"] {
+  --accent: #014a2c;
+  --input-accent: #effff7;
+  --on-accent: #effff7;
+  --eyebrow-accent: #a9dec4;
+  --ambient-top: #273a31;
+  --ambient-mid: #222b27;
+}
+
+:root[data-mode="inline"] {
+  --accent: #9d92b8;
+  --input-accent: #dcd3fb;
+  --eyebrow-accent: #bdb2e0;
+  --ambient-top: #332f3f;
+  --ambient-mid: #25242b;
+}
+
+:root[data-mode="tailwind"] {
+  --accent: #8f8b1c;
+  --input-accent: #ece77f;
+  --eyebrow-accent: #cdc85a;
+  --ambient-top: #36351f;
+  --ambient-mid: #26271f;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse 72% 65% at 50% 88%, var(--ambient-top) 0%, transparent 78%),
+    linear-gradient(155deg, var(--ambient-mid) 0%, #171b1e 58%, #111518 100%);
+  background-attachment: fixed;
+}
+button, input { font: inherit; }
+button { color: inherit; }
+
+.shell { width: min(960px, calc(100% - 32px)); margin: 0 auto; padding: 22px 0 38px; }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: clamp(44px, 8vh, 84px); }
+.brand { display: inline-flex; align-items: center; gap: 10px; color: #f5f4ef; font-family: "Space Grotesk", sans-serif; font-size: 17px; font-weight: 700; letter-spacing: -.02em; text-decoration: none; }
+.brand img { display: block; border-radius: 8px; }
+.site-nav { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+.site-nav a:not(.coffee-button) { padding: 8px 12px; border-radius: 999px; color: #a3a5a8; font-size: 14px; font-weight: 600; text-decoration: none; transition: color .2s, background .2s; }
+.site-nav a:not(.coffee-button):hover { color: #f5f4ef; background: rgba(255,255,255,.06); }
+.site-nav a[aria-current="page"] { color: #f5f4ef; background: rgba(255,255,255,.08); }
+.coffee-button { display: inline-flex; align-items: center; gap: 7px; margin-left: 8px; padding: 9px 15px; border-radius: 999px; background: var(--accent); color: var(--on-accent); font-size: 13px; font-weight: 700; text-decoration: none; transition: filter .2s, transform .2s; }
+.coffee-button:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.coffee-button svg { width: 17px; height: 17px; }
+.coffee-short { display: none; }
+.coffee-button--large { margin: 8px 0 0; padding: 12px 20px; font-size: 15px; }
+.page .hero { margin-left: 0; }
+.page .hero h1 { font-size: clamp(32px, 4.4vw, 48px); }
+.tool-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 48px; }
+.tool-card { display: flex; flex-direction: column; color: #f5f4ef; text-decoration: none; }
+.tool-card__tab { align-self: flex-start; padding: 9px 14px 7px; border-radius: 12px 12px 0 0; background: var(--card-accent); color: var(--card-ink); font-size: 11px; font-weight: 700; letter-spacing: .06em; }
+.tool-card__body { display: grid; flex: 1; gap: 8px; align-content: start; padding: 20px 20px 18px; border: 1px solid rgba(255,255,255,.06); border-top: 3px solid var(--card-accent); border-radius: 0 16px 16px 16px; background: #131517; transition: border-color .2s, transform .2s; }
+.tool-card__body strong { font-family: "Space Grotesk", sans-serif; font-size: 20px; letter-spacing: -.02em; }
+.tool-card__body span { color: #9a9ca0; font-size: 14px; line-height: 1.5; }
+.tool-card__body em { margin-top: 6px; color: var(--card-text); font-size: 13px; font-style: normal; font-weight: 700; }
+a.tool-card:hover .tool-card__body { transform: translateY(-2px); border-color: color-mix(in srgb, var(--card-accent) 60%, transparent); border-top-color: var(--card-accent); }
+.tool-card--soon { padding-top: 30px; }
+.tool-card--soon .tool-card__body { border: 1px dashed rgba(255,255,255,.14); border-radius: 16px; background: transparent; }
+.about { max-width: 640px; margin: 36px 0 0; color: #c9cacc; font-size: 17px; line-height: 1.7; }
+.about p { margin: 0 0 18px; }
+.about strong { color: #f5f4ef; }
+.about a:not(.coffee-button) { color: var(--eyebrow-accent); }
+.hero { margin-left: 7.5%; }
+.eyebrow { display: flex; align-items: center; gap: 10px; color: var(--eyebrow-accent); font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+.eyebrow span { width: 28px; height: 2px; background: var(--eyebrow-accent); }
+h1 { margin: 14px 0 2px; font-family: "Space Grotesk", sans-serif; font-size: clamp(36px, 5vw, 56px); line-height: 1; letter-spacing: -.04em; }
+.hero p { margin: 10px 0 0; color: var(--muted); font-size: 17px; }
+
+.calculator { width: min(820px, 100%); margin: 72px auto 0; }
+/* Tabs run 20px behind the panel so the panel's rounded corners sit over tab colour, not background.
+   The active tab rises above the panel; its concave 6px fillets (matching the reference union) are vector masks that overlap
+   the tab and panel by 1px so no anti-aliased seam can appear at fractional column widths. */
+.tabs { --tab-overlap: 20px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; align-items: end; margin-bottom: calc(var(--tab-overlap) * -1); }
+/* Index-divider tabs: a flat top with S-curved sides that rise tangentially from the panel line,
+   so the active tab and the panel read as one continuous shape. The curves are fixed-size paths
+   (the right one mirrored); each foot reaches --foot past the tab's edge and overlaps the body
+   and panel by 1px, so no seam can show. */
+.tab { --tab-bg: #131313; --run: 24px; --foot: 6px; position: relative; isolation: isolate; border: 0; min-height: calc(44px + var(--tab-overlap)); padding: 0 calc(var(--run) * .5) var(--tab-overlap); background: transparent; color: #929397; font-size: 10px; font-weight: 700; line-height: 1.2; letter-spacing: .04em; cursor: pointer; transition: min-height .2s ease, color .2s ease; }
+.tab:hover { color: #d5d5d3; }
+.tab.is-active { --tab-bg: var(--accent); --run: 30px; z-index: 2; min-height: calc(52px + var(--tab-overlap)); color: var(--on-accent); }
+.tab-shape-body, .tab-shape-left, .tab-shape-right { position: absolute; z-index: -1; background: var(--tab-bg); pointer-events: none; }
+.tab-shape-body { inset: 0 var(--run); }
+.tab-shape-left, .tab-shape-right { top: 0; width: calc(var(--run) + var(--foot) + 1px); height: 45px; clip-path: path("M0 44C15 44 15 0 30 0H31V45H0Z"); }
+.tab-shape-left { left: calc(var(--foot) * -1); }
+.tab-shape-right { right: calc(var(--foot) * -1); transform: scaleX(-1); }
+.tab.is-active .tab-shape-left, .tab.is-active .tab-shape-right { height: 53px; clip-path: path("M0 52C18 52 18 0 36 0H37V53H0Z"); }
+/* Outer tabs: like a folder, the outside edge is a straight line flush with the panel edge,
+   with a rounded top corner; only the inner side curves. */
+.tab:first-child .tab-shape-left, .tab:last-child .tab-shape-right { display: none; }
+.tab:first-child .tab-shape-body { left: 0; border-top-left-radius: 12px; }
+.tab:last-child .tab-shape-body { right: 0; border-top-right-radius: 12px; }
+/* Outer labels align to the straight outer edges; inner labels stay centred between the curves. */
+.tab:first-child { padding-left: 18px; text-align: left; }
+.tab:last-child { padding-right: 18px; text-align: right; }
+.panel { position: relative; z-index: 1; padding: 34px 32px 28px; border-radius: 16px; background: var(--accent); color: var(--on-accent); box-shadow: 0 28px 70px rgba(0,0,0,.22); }
+/* Value blocks share the row's two tracks (label, field) so the swap sits dead centre on the field row. */
+.conversion-row { display: grid; grid-template-columns: 1fr 54px 1fr; grid-template-rows: auto auto; gap: 8px 16px; }
+.value-block { display: grid; grid-row: span 2; grid-template-rows: subgrid; }
+.value-block > span:first-child, .control { display: grid; gap: 8px; font-size: 12px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+.input-wrap { display: flex; align-items: baseline; gap: 10px; width: 100%; border: 1px solid rgba(255,255,255,.07); border-radius: 13px; background: var(--ink); padding: 11px 15px; box-shadow: inset 0 1px rgba(255,255,255,.04); }
+.input-wrap input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--input-accent); font-family: "Space Grotesk", sans-serif; font-size: clamp(32px, 5vw, 47px); line-height: 1; }
+.input-wrap b { color: #b6b9bc; font-size: 12px; font-weight: 700; }
+input::-webkit-inner-spin-button { appearance: none; }
+.swap { grid-row: 2; grid-column: 2; align-self: center; display: grid; place-items: center; width: 54px; height: 54px; padding: 0; border: 0; background: transparent; color: var(--on-accent); cursor: pointer; transition: transform .2s, opacity .2s; }
+.swap svg { display: block; width: 28px; height: 28px; }
+.swap:hover { transform: rotate(180deg); opacity: .65; }
+.divider { height: 1px; margin: 32px 0 25px; background: rgba(0,0,0,.16); }
+.settings-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 17px; }
+.settings-heading div { display: grid; gap: 2px; }
+.settings-heading span { font-size: 14px; font-weight: 800; }
+.settings-heading small { opacity: .58; }
+.settings-heading button, .detect-button { border: 1px solid color-mix(in srgb, var(--on-accent) 50%, transparent); border-radius: 999px; background: transparent; padding: 8px 13px; color: var(--on-accent); font-size: 12px; font-weight: 700; cursor: pointer; }
+.settings-heading button:hover, .detect-button:hover { background: rgba(255,255,255,.26); }
+.settings { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: end; }
+.control { text-transform: none; letter-spacing: 0; }
+.input-wrap--small { padding: 10px 13px; border-radius: 9px; }
+.input-wrap--small input { font-family: "DM Sans", sans-serif; font-size: 14px; color: #f5f4ef; }
+.presets { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.chip { height: 40px; border: 1px solid rgba(255,255,255,.07); border-radius: 9px; background: var(--ink); color: #d5d6d8; cursor: pointer; }
+.chip.is-active { background: var(--ink); color: var(--input-accent); border-color: var(--ink); }
+.detect-button { height: 40px; }
+.presets--viewport { grid-column: 1 / -1; }
+.presets--viewport .chip { font-size: 12px; font-weight: 700; }
+.settings--precision { margin-top: 12px; align-items: center; }
+.presets--decimals { grid-template-columns: repeat(5, 1fr); }
+.code-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto; gap: 8px 16px; }
+.code-area { width: 100%; min-height: 300px; resize: vertical; border: 1px solid rgba(255,255,255,.07); border-radius: 13px; background: var(--ink); color: #f5f4ef; padding: 14px 15px; font: 13px/1.55 ui-monospace, "Cascadia Code", Consolas, monospace; tab-size: 2; white-space: pre-wrap; overflow-wrap: anywhere; overflow: auto; outline: 0; box-shadow: inset 0 1px rgba(255,255,255,.04); }
+.code-area:focus { border-color: color-mix(in srgb, var(--input-accent) 55%, transparent); }
+.code-area::placeholder { color: #6c6e71; }
+.code-area--output { display: block; color: var(--input-accent); cursor: text; user-select: text; }
+.code-area--output span { white-space: nowrap; }
+.code-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.presets--options { display: flex; flex-wrap: wrap; gap: 6px; }
+.presets--options .chip { padding: 0 14px; font-size: 12px; font-weight: 700; }
+.presets--options .chip[aria-pressed="true"]::before { content: "✓ "; }
+.presets--options .chip[aria-pressed="false"] { color: #9a9ca0; }
+.code-actions { display: flex; gap: 8px; }
+.formula { display: grid; gap: 8px; margin-top: 22px; font-size: 12px; font-weight: 800; }
+.formula code { display: block; padding: 12px 15px; border: 1px solid rgba(255,255,255,.07); border-radius: 9px; background: var(--ink); color: var(--input-accent); font-family: "Space Grotesk", sans-serif; font-size: 14px; font-weight: 500; overflow-wrap: anywhere; }
+.context-line { margin: 12px 0 0; font-size: 12px; color: var(--on-accent); opacity: .68; }
+.site-footer { display: grid; justify-items: center; gap: 10px; margin-top: 64px; color: #6c6e71; font-size: 12px; }
+.site-footer nav { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; font-family: "Space Grotesk", sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.site-footer a { color: #8c8d90; text-decoration: none; }
+.site-footer a:hover { color: #f5f4ef; }
+.site-footer i { width: 3px; height: 3px; border-radius: 50%; background: #484a4d; }
+.site-footer p { margin: 0; }
+
+@media (max-width: 860px) {
+  .tool-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 640px) {
+  .shell { padding-top: 16px; }
+  .topbar { margin-bottom: 40px; }
+  .brand span, .coffee-long { display: none; }
+  .coffee-short { display: inline; }
+  .site-nav a:not(.coffee-button) { padding: 7px 9px; font-size: 13px; }
+  .coffee-button { margin-left: 2px; padding: 8px 11px; }
+  .hero { margin-left: 0; }
+  .tool-grid { grid-template-columns: 1fr; }
+  .about { margin-left: 0; font-size: 16px; }
+  .calculator { margin-top: 48px; }
+  .tabs { gap: 3px; }
+  .tab, .tab.is-active { --run: 10px; --foot: 4px; padding: 0 3px var(--tab-overlap); font-size: 9px; letter-spacing: .02em; }
+  .tab:first-child, .tab:last-child { padding-inline: 8px; text-align: center; }
+  .tab-shape-left, .tab-shape-right { clip-path: path("M0 44C7 44 7 0 14 0H15V45H0Z"); }
+  .tab.is-active .tab-shape-left, .tab.is-active .tab-shape-right { clip-path: path("M0 52C7 52 7 0 14 0H15V53H0Z"); }
+  .code-row { grid-template-columns: 1fr; grid-template-rows: none; }
+  .code-area { min-height: 220px; }
+  .panel { padding: 28px 20px; }
+  .conversion-row { grid-template-columns: 1fr; grid-template-rows: none; }
+  .value-block { grid-row: auto; grid-template-rows: auto auto; gap: 8px; }
+  .swap { grid-row: auto; grid-column: auto; justify-self: center; margin: -3px 0; transform: rotate(90deg); }
+  .swap:hover { transform: rotate(270deg); }
+  .settings { grid-template-columns: 1fr; }
+  .settings-heading { align-items: flex-end; }
+}
+
+@media (max-width: 400px) {
+  .topbar { gap: 8px; }
+  .site-nav { gap: 0; }
+  .site-nav a:not(.coffee-button) { padding: 6px 7px; font-size: 12.5px; }
+  .coffee-button { gap: 5px; padding: 7px 10px; font-size: 12px; }
+  .coffee-button svg { width: 15px; height: 15px; }
+  .brand img { width: 26px; height: 26px; }
+}
+
+/* Plugin-only overrides on top of the site's styles.css (the 400px frame uses its mobile rules). */
+body.plugin { min-height: 0; }
+.plugin .shell { width: 100%; padding: 14px 12px 16px; }
+.plugin-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.plugin-header img { display: block; flex: none; border-radius: 8px; }
+.plugin-header strong { font-family: "Space Grotesk", sans-serif; font-size: 16px; letter-spacing: -.02em; }
+.plugin-header p { margin: 2px 0 0; color: var(--muted); font-size: 12px; line-height: 1.35; }
+.selection-bar { display: grid; gap: 8px; margin-bottom: 16px; padding: 10px 12px; border: 1px solid rgba(255,255,255,.07); border-radius: 12px; background: #131517; color: #a3a5a8; font-size: 12px; }
+.selection-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.selection-name b { color: #f5f4ef; }
+.selection-name small { color: #6c6e71; }
+.selection-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.selection-bar .chip { height: 30px; padding: 0 11px; border-color: rgba(255,255,255,.1); font-size: 11.5px; font-weight: 700; }
+.selection-bar .chip:hover { color: var(--eyebrow-accent); }
+.plugin .calculator { margin-top: 0; }
+.plugin .detect-button { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.plugin .detect-button:disabled { opacity: .45; cursor: default; }
+.plugin-footer { display: flex; justify-content: center; gap: 10px; margin-top: 16px; font-size: 11px; }
+.plugin-footer a { color: #8c8d90; text-decoration: none; }
+.plugin-footer a:hover { color: #f5f4ef; }
+
+  </style>
+</head>
+<body class="plugin">
+  <main class="shell">
+    <header class="plugin-header">
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiMxNTE5MWMiLz4KICA8cGF0aCBmaWxsPSIjZjRiNTA2IiBkPSJNMTAgMTdhNSA1IDAgMCAxIDUtNWgxMGE1IDUgMCAwIDEgNSA1djVhNCA0IDAgMCAwIDQgNGgxNWE1IDUgMCAwIDEgNSA1djE2YTUgNSAwIDAgMS01IDVIMTVhNSA1IDAgMCAxLTUtNXoiLz4KICA8cmVjdCB4PSIxNSIgeT0iMzQiIHdpZHRoPSIxNSIgaGVpZ2h0PSIxMSIgcng9IjIuNSIgZmlsbD0iIzFjMWQyMSIvPgogIDxyZWN0IHg9IjM0IiB5PSIzNCIgd2lkdGg9IjE1IiBoZWlnaHQ9IjExIiByeD0iMi41IiBmaWxsPSIjMWMxZDIxIi8+Cjwvc3ZnPgo=" alt="" width="30" height="30">
+      <div>
+        <strong>CSS Toolkit</strong>
+        <p id="hero-hint">Type into either field. The other updates instantly.</p>
+      </div>
+    </header>
+
+    <div id="selection-bar" class="selection-bar" aria-live="polite"></div>
+
+<section class="calculator" aria-label="CSS converters">
+      <nav class="tabs" aria-label="Conversion type">
+        <button class="tab is-active" data-mode="rem" type="button"><span class="tab-shape-left" aria-hidden="true"></span><span class="tab-shape-body" aria-hidden="true"></span><span class="tab-shape-right" aria-hidden="true"></span>PX / REM</button>
+        <button class="tab" data-mode="em" type="button"><span class="tab-shape-left" aria-hidden="true"></span><span class="tab-shape-body" aria-hidden="true"></span><span class="tab-shape-right" aria-hidden="true"></span>REM / EM</button>
+        <button class="tab" data-mode="vw" type="button"><span class="tab-shape-left" aria-hidden="true"></span><span class="tab-shape-body" aria-hidden="true"></span><span class="tab-shape-right" aria-hidden="true"></span>PX / VW</button>
+        <button class="tab" data-mode="vh" type="button"><span class="tab-shape-left" aria-hidden="true"></span><span class="tab-shape-body" aria-hidden="true"></span><span class="tab-shape-right" aria-hidden="true"></span>PX / VH</button>
+        <button class="tab" data-mode="inline" type="button"><span class="tab-shape-left" aria-hidden="true"></span><span class="tab-shape-body" aria-hidden="true"></span><span class="tab-shape-right" aria-hidden="true"></span>CSS / INLINE</button>
+        <button class="tab" data-mode="tailwind" type="button"><span class="tab-shape-left" aria-hidden="true"></span><span class="tab-shape-body" aria-hidden="true"></span><span class="tab-shape-right" aria-hidden="true"></span>CSS / TAILWIND</button>
+      </nav>
+
+      <div class="panel">
+        <div id="unit-view">
+          <div class="conversion-row">
+            <label class="value-block">
+              <span id="left-label">Pixels</span>
+              <span class="input-wrap">
+                <input id="left-value" inputmode="decimal" type="number" step="any" value="16" aria-label="Source value">
+                <b id="left-unit">px</b>
+              </span>
+            </label>
+
+            <button id="swap" class="swap" type="button" aria-label="Swap values"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h15m-4-4 4 4-4 4M20 16H5m4 4-4-4 4-4"/></svg></button>
+
+            <label class="value-block">
+              <span id="right-label">REM</span>
+              <span class="input-wrap">
+                <input id="right-value" inputmode="decimal" type="number" step="any" value="1" aria-label="Converted value">
+                <b id="right-unit">rem</b>
+              </span>
+            </label>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="settings-heading">
+            <div><span>Conversion settings</span><small>Adjust the calculation base</small></div>
+            <button id="copy-result" type="button">Copy result</button>
+          </div>
+          <div id="settings-area" class="settings"></div>
+          <div class="settings settings--precision">
+            <span class="control">Decimal places</span>
+            <div class="presets presets--decimals" role="group" aria-label="Decimal places">
+              <button type="button" class="chip" data-decimals="0">0</button>
+              <button type="button" class="chip" data-decimals="1">1</button>
+              <button type="button" class="chip" data-decimals="2">2</button>
+              <button type="button" class="chip is-active" data-decimals="3">3</button>
+              <button type="button" class="chip" data-decimals="4">4</button>
+            </div>
+          </div>
+          <div class="formula">
+            <span>Formula</span>
+            <code id="formula"></code>
+          </div>
+          <p id="context-line" class="context-line" aria-live="polite"></p>
+        </div>
+
+        <div id="code-view" hidden>
+          <div class="code-row">
+            <label class="value-block">
+              <span id="code-input-label">HTML with &lt;style&gt;</span>
+              <textarea id="code-input" class="code-area" spellcheck="false" autocomplete="off"></textarea>
+            </label>
+            <label class="value-block">
+              <span id="code-output-label">Inlined HTML</span>
+              <output id="code-output" class="code-area code-area--output" tabindex="0"></output>
+            </label>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="settings-heading">
+            <div><span id="code-heading">Converter options</span><small id="code-subheading">Output updates as you type</small></div>
+            <button id="copy-code" type="button">Copy result</button>
+          </div>
+          <div class="code-controls">
+            <div id="code-options" class="presets presets--options" role="group" aria-label="Converter options"></div>
+            <div class="code-actions">
+              <button id="code-example" class="detect-button" type="button">Load example</button>
+              <button id="code-clear" class="detect-button" type="button">Clear</button>
+            </div>
+          </div>
+          <p id="code-status" class="context-line" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="plugin-footer">
+      <a href="https://css-toolkit-app.netlify.app">css-toolkit-app.netlify.app ↗</a>
+      <a data-coffee href="https://buymeacoffee.com/98kid">Buy me a coffee ↗</a>
+    </footer>
+  </main>
+  <script>
+// ── logic.js
+const DEFAULT_DECIMALS = 4;
+
+const round = (value, precision = DEFAULT_DECIMALS) => {
+  if (!Number.isFinite(value)) return 0;
+  return Number(value.toFixed(precision));
+};
+
+const converters = {
+  rem: {
+    leftUnit: "px",
+    rightUnit: "rem",
+    leftLabel: "Pixels",
+    rightLabel: "REM",
+    defaultLeft: 16,
+    toRight: (px, settings) => round(px / settings.root, settings.decimals),
+    toLeft: (rem, settings) => round(rem * settings.root, settings.decimals),
+  },
+  em: {
+    leftUnit: "rem",
+    rightUnit: "em",
+    leftLabel: "REM",
+    rightLabel: "EM",
+    defaultLeft: 1,
+    toRight: (rem, settings) => round((rem * settings.root) / settings.parent, settings.decimals),
+    toLeft: (em, settings) => round((em * settings.parent) / settings.root, settings.decimals),
+  },
+  vw: {
+    leftUnit: "px",
+    rightUnit: "vw",
+    leftLabel: "Pixels",
+    rightLabel: "Viewport width",
+    defaultLeft: 16,
+    toRight: (px, settings) => round((px / settings.viewportWidth) * 100, settings.decimals),
+    toLeft: (vw, settings) => round((vw / 100) * settings.viewportWidth, settings.decimals),
+  },
+  vh: {
+    leftUnit: "px",
+    rightUnit: "vh",
+    leftLabel: "Pixels",
+    rightLabel: "Viewport height",
+    defaultLeft: 16,
+    toRight: (px, settings) => round((px / settings.viewportHeight) * 100, settings.decimals),
+    toLeft: (vh, settings) => round((vh / 100) * settings.viewportHeight, settings.decimals),
+  },
+};
+
+function convert(mode, direction, rawValue, settings) {
+  const value = Number(rawValue);
+  const converter = converters[mode];
+  if (!converter || !Number.isFinite(value)) return 0;
+  return direction === "toLeft"
+    ? converter.toLeft(value, settings)
+    : converter.toRight(value, settings);
+}
+
+const VIEWPORT_PRESETS = [
+  { width: 1920, height: 1080 },
+  { width: 1440, height: 900 },
+  { width: 1366, height: 768 },
+  { width: 375, height: 667 },
+];
+
+// Formula text and a worked example for the direction the user last edited.
+const formulas = {
+  rem: {
+    toRight: s => ["rem = px ÷ root font size", v => `${v}px ÷ ${s.root}px`],
+    toLeft: s => ["px = rem × root font size", v => `${v}rem × ${s.root}px`],
+  },
+  em: {
+    toRight: s => ["em = rem × root font size ÷ parent font size", v => `${v}rem × ${s.root}px ÷ ${s.parent}px`],
+    toLeft: s => ["rem = em × parent font size ÷ root font size", v => `${v}em × ${s.parent}px ÷ ${s.root}px`],
+  },
+  vw: {
+    toRight: s => ["vw = px ÷ viewport width × 100", v => `${v}px ÷ ${s.viewportWidth}px × 100`],
+    toLeft: s => ["px = vw × viewport width ÷ 100", v => `${v}vw × ${s.viewportWidth}px ÷ 100`],
+  },
+  vh: {
+    toRight: s => ["vh = px ÷ viewport height × 100", v => `${v}px ÷ ${s.viewportHeight}px × 100`],
+    toLeft: s => ["px = vh × viewport height ÷ 100", v => `${v}vh × ${s.viewportHeight}px ÷ 100`],
+  },
+};
+
+function describe(mode, direction, rawValue, resultText, settings) {
+  const converter = converters[mode];
+  const [expression, steps] = formulas[mode][direction === "toLeft" ? "toLeft" : "toRight"](settings);
+  const value = Number(rawValue) || 0;
+  const unit = direction === "toLeft" ? converter.leftUnit : converter.rightUnit;
+  return { expression, worked: `${steps(value)} = ${resultText}${unit}` };
+}
+
+// ── tailwind.js
+// CSS → Tailwind (v4) utility classes. Pure string processing so it runs (and is tested) in Node.
+// Anything without a close utility falls back to Tailwind's arbitrary values/properties, so no
+// declaration is silently dropped.
+
+const BREAKPOINTS = { 640: "sm", 768: "md", 1024: "lg", 1280: "xl", 1536: "2xl" };
+const PSEUDO_VARIANTS = {
+  hover: "hover", focus: "focus", "focus-visible": "focus-visible", "focus-within": "focus-within",
+  active: "active", visited: "visited", disabled: "disabled", checked: "checked",
+  "first-child": "first", "last-child": "last", "nth-child(odd)": "odd", "nth-child(even)": "even",
+  before: "before", after: "after", placeholder: "placeholder",
+};
+const FONT_SIZES = { 12: "xs", 14: "sm", 16: "base", 18: "lg", 20: "xl", 24: "2xl", 30: "3xl", 36: "4xl", 48: "5xl", 60: "6xl", 72: "7xl", 96: "8xl", 128: "9xl" };
+const FONT_WEIGHTS = { 100: "thin", 200: "extralight", 300: "light", 400: "normal", 500: "medium", 600: "semibold", 700: "bold", 800: "extrabold", 900: "black" };
+const RADII = { 0: "none", 2: "sm", 4: "", 6: "md", 8: "lg", 12: "xl", 16: "2xl", 24: "3xl" };
+const LEADING = { 1: "none", 1.25: "tight", 1.375: "snug", 1.5: "normal", 1.625: "relaxed", 2: "loose" };
+const SHADOWS = { none: "none" };
+const NAMED_COLORS = { white: "white", "#fff": "white", "#ffffff": "white", black: "black", "#000": "black", "#000000": "black", transparent: "transparent", currentcolor: "current", inherit: "inherit" };
+const KEYWORDS = {
+  display: { block: "block", "inline-block": "inline-block", inline: "inline", flex: "flex", "inline-flex": "inline-flex", grid: "grid", "inline-grid": "inline-grid", none: "hidden", contents: "contents", table: "table" },
+  position: { static: "static", relative: "relative", absolute: "absolute", fixed: "fixed", sticky: "sticky" },
+  "flex-direction": { row: "flex-row", "row-reverse": "flex-row-reverse", column: "flex-col", "column-reverse": "flex-col-reverse" },
+  "flex-wrap": { wrap: "flex-wrap", nowrap: "flex-nowrap", "wrap-reverse": "flex-wrap-reverse" },
+  "justify-content": { "flex-start": "justify-start", start: "justify-start", "flex-end": "justify-end", end: "justify-end", center: "justify-center", "space-between": "justify-between", "space-around": "justify-around", "space-evenly": "justify-evenly", stretch: "justify-stretch" },
+  "align-items": { "flex-start": "items-start", start: "items-start", "flex-end": "items-end", end: "items-end", center: "items-center", baseline: "items-baseline", stretch: "items-stretch" },
+  "align-self": { auto: "self-auto", "flex-start": "self-start", "flex-end": "self-end", center: "self-center", stretch: "self-stretch", baseline: "self-baseline" },
+  "align-content": { center: "content-center", "flex-start": "content-start", "flex-end": "content-end", "space-between": "content-between", "space-around": "content-around" },
+  "text-align": { left: "text-left", center: "text-center", right: "text-right", justify: "text-justify", start: "text-start", end: "text-end" },
+  "text-transform": { uppercase: "uppercase", lowercase: "lowercase", capitalize: "capitalize", none: "normal-case" },
+  "text-decoration": { underline: "underline", "line-through": "line-through", none: "no-underline", overline: "overline" },
+  "text-decoration-line": { underline: "underline", "line-through": "line-through", none: "no-underline", overline: "overline" },
+  "font-style": { italic: "italic", normal: "not-italic" },
+  "white-space": { normal: "whitespace-normal", nowrap: "whitespace-nowrap", pre: "whitespace-pre", "pre-line": "whitespace-pre-line", "pre-wrap": "whitespace-pre-wrap" },
+  "box-sizing": { "border-box": "box-border", "content-box": "box-content" },
+  "object-fit": { contain: "object-contain", cover: "object-cover", fill: "object-fill", none: "object-none", "scale-down": "object-scale-down" },
+  "border-style": { solid: "border-solid", dashed: "border-dashed", dotted: "border-dotted", double: "border-double", none: "border-none" },
+  "pointer-events": { none: "pointer-events-none", auto: "pointer-events-auto" },
+  "user-select": { none: "select-none", text: "select-text", all: "select-all", auto: "select-auto" },
+  visibility: { visible: "visible", hidden: "invisible" },
+  "list-style-type": { none: "list-none", disc: "list-disc", decimal: "list-decimal" },
+  "word-break": { "break-all": "break-all", "keep-all": "break-keep" },
+};
+const OVERFLOW = ["auto", "hidden", "visible", "scroll", "clip"];
+const CURSORS = ["auto", "default", "pointer", "wait", "text", "move", "help", "not-allowed", "none", "grab", "grabbing"];
+const SIDES = { top: "t", right: "r", bottom: "b", left: "l" };
+const CONTAINERS = { 256: "3xs", 288: "2xs", 320: "xs", 384: "sm", 448: "md", 512: "lg", 576: "xl", 672: "2xl", 768: "3xl", 896: "4xl", 1024: "5xl", 1152: "6xl", 1280: "7xl" };
+
+const arbitrary = value => `[${value.trim().replace(/\s*,\s*/g, ",").replace(/\s+/g, "_")}]`;
+
+function toPx(value) {
+  const m = /^(-?\d*\.?\d+)(px|rem|em)?$/.exec(value.trim());
+  if (!m) return null;
+  const n = Number(m[1]);
+  return m[2] === "rem" || m[2] === "em" ? n * 16 : m[2] === "px" || n === 0 ? n : null;
+}
+
+// Tailwind spacing scale: 1 unit = 0.25rem = 4px, with half steps up to 3.5.
+function spacing(value) {
+  const v = value.trim();
+  if (v === "auto") return "auto";
+  if (v === "1px") return "px";
+  const px = toPx(v);
+  if (px !== null) {
+    const unit = Math.abs(px) / 4;
+    const ok = Number.isInteger(unit) || (unit < 4 && Number.isInteger(unit * 2));
+    if (ok) return String(unit);
+  }
+  return arbitrary(v.replace(/^-/, ""));
+}
+
+function withSign(prefix, value) {
+  const negative = value.trim().startsWith("-") && value.trim() !== "-0";
+  const scale = spacing(value);
+  return `${negative ? "-" : ""}${prefix}-${scale}`;
+}
+
+function size(prefix, value) {
+  const v = value.trim();
+  const special = { "100%": "full", auto: "auto", "100vw": "screen", "100vh": "screen", "100dvh": "dvh", "fit-content": "fit", "min-content": "min", "max-content": "max", "50%": "1/2", "33.333333%": "1/3", "66.666667%": "2/3", "25%": "1/4", "75%": "3/4", "20%": "1/5" };
+  if (special[v] && !(prefix === "w" && v === "100vh") && !(prefix === "h" && v === "100vw")) return `${prefix}-${special[v]}`;
+  return `${prefix}-${spacing(v)}`;
+}
+
+function color(prefix, value) {
+  const v = value.trim().toLowerCase();
+  return `${prefix}-${NAMED_COLORS[v] || arbitrary(value.trim())}`;
+}
+
+// Expands 1–4 value box shorthands (padding/margin/inset) to the tightest utilities.
+function box(prefix, value) {
+  const parts = value.trim().split(/\s+/);
+  const [t, r = t, b = t, l = r] = parts;
+  const make = (p, v) => (prefix === "m" ? withSign(p, v) : `${p}-${spacing(v)}`);
+  if (t === r && r === b && b === l) return [make(prefix, t)];
+  if (t === b && r === l) return [make(`${prefix}y`, t), make(`${prefix}x`, r)];
+  return [make(`${prefix}t`, t), make(`${prefix}r`, r), make(`${prefix}b`, b), make(`${prefix}l`, l)];
+}
+
+function radius(value) {
+  const v = value.trim();
+  if (v === "50%" || v === "9999px" || /^\d{3,}px$/.test(v)) return "rounded-full";
+  const px = toPx(v);
+  if (px !== null && px in RADII) return RADII[px] ? `rounded-${RADII[px]}` : "rounded";
+  return `rounded-${arbitrary(v)}`;
+}
+
+function border(value) {
+  const out = [];
+  for (const part of value.trim().split(/\s+(?![^(]*\))/)) {
+    const px = toPx(part);
+    if (px !== null) out.push(px === 1 ? "border" : [0, 2, 4, 8].includes(px) ? `border-${px}` : `border-${arbitrary(part)}`);
+    else if (part === "solid") continue; // Tailwind's reset already makes borders solid.
+    else if (KEYWORDS["border-style"][part]) out.push(KEYWORDS["border-style"][part]);
+    else out.push(color("border", part));
+  }
+  return out;
+}
+
+function declarationToClasses(prop, rawValue) {
+  const value = rawValue.trim();
+  const v = value.toLowerCase();
+  if (KEYWORDS[prop]?.[v]) return [KEYWORDS[prop][v]];
+
+  switch (prop) {
+    case "padding": return box("p", value);
+    case "margin": return box("m", value);
+    case "padding-top": case "padding-right": case "padding-bottom": case "padding-left":
+      return [`p${SIDES[prop.slice(8)]}-${spacing(value)}`];
+    case "margin-top": case "margin-right": case "margin-bottom": case "margin-left":
+      return [withSign(`m${SIDES[prop.slice(7)]}`, value)];
+    case "padding-inline": return [`px-${spacing(value)}`];
+    case "padding-block": return [`py-${spacing(value)}`];
+    case "margin-inline": return [withSign("mx", value)];
+    case "margin-block": return [withSign("my", value)];
+    case "gap": {
+      const [row, col] = value.split(/\s+/);
+      return col && col !== row ? [`gap-y-${spacing(row)}`, `gap-x-${spacing(col)}`] : [`gap-${spacing(row)}`];
+    }
+    case "row-gap": return [`gap-y-${spacing(value)}`];
+    case "column-gap": return [`gap-x-${spacing(value)}`];
+    case "width": return [size("w", value)];
+    case "height": return [size("h", value)];
+    case "min-width": return [size("min-w", value)];
+    case "min-height": return [size("min-h", value)];
+    case "max-width": {
+      const px = toPx(value);
+      return [v === "none" ? "max-w-none" : px !== null && CONTAINERS[px] ? `max-w-${CONTAINERS[px]}` : size("max-w", value)];
+    }
+    case "outline": {
+      if (v === "none" || v === "0") return ["outline-hidden"];
+      return v.split(/\s+(?![^(]*\))/).map(part => {
+        const px = toPx(part);
+        if (px !== null) return px === 1 ? "outline" : `outline-${Number.isInteger(px) ? px : arbitrary(part)}`;
+        if (["solid", "dashed", "dotted", "double"].includes(part)) return `outline-${part}`;
+        return color("outline", part);
+      });
+    }
+    case "outline-offset": { const px = toPx(value); return [px !== null && Number.isInteger(px) ? `outline-offset-${px}` : `outline-offset-${arbitrary(value)}`]; }
+    case "max-height": return [v === "none" ? "max-h-none" : size("max-h", value)];
+    case "top": case "right": case "bottom": case "left": return [withSign(prop, value)];
+    case "inset": return value.trim().split(/\s+/).length === 1 ? [withSign("inset", value)] : [`inset-${arbitrary(value)}`];
+    case "z-index": return [/^(0|10|20|30|40|50|auto)$/.test(v) ? `z-${v}` : `z-${arbitrary(value)}`];
+    case "opacity": {
+      const pct = Math.round(Number(v) * 100);
+      return [Number.isFinite(pct) && pct % 5 === 0 ? `opacity-${pct}` : `opacity-${arbitrary(value)}`];
+    }
+    case "overflow": case "overflow-x": case "overflow-y":
+      return [OVERFLOW.includes(v) ? `${prop}-${v}` : `[${prop}:${value}]`];
+    case "cursor": return [CURSORS.includes(v) ? `cursor-${v}` : `cursor-${arbitrary(value)}`];
+    case "color": return [color("text", value)];
+    case "background-color": return [color("bg", value)];
+    case "background":
+      return /^(#|rgb|hsl|[a-z]+$)/i.test(v) ? [color("bg", value)] : [`bg-${arbitrary(value)}`];
+    case "border-color": return [color("border", value)];
+    case "border": return v === "none" || v === "0" ? ["border-0"] : border(value);
+    case "border-width": { const px = toPx(value); return [px === 1 ? "border" : [0, 2, 4, 8].includes(px) ? `border-${px}` : `border-${arbitrary(value)}`]; }
+    case "border-top": case "border-right": case "border-bottom": case "border-left": {
+      const side = SIDES[prop.slice(7)];
+      return border(value).map(c => c === "border" ? `border-${side}` : c.replace(/^border-(\d)/, `border-${side}-$1`).replace(/^border-(\[\d)/, `border-${side}-$1`));
+    }
+    case "border-radius": return [radius(value)];
+    case "font-size": { const px = toPx(value); return [px !== null && FONT_SIZES[px] ? `text-${FONT_SIZES[px]}` : `text-${arbitrary(value)}`]; }
+    case "font-weight": return [FONT_WEIGHTS[v] ? `font-${FONT_WEIGHTS[v]}` : v === "bold" ? "font-bold" : v === "normal" ? "font-normal" : `font-${arbitrary(value)}`];
+    case "font-family": return [`font-${arbitrary(value.replace(/["']/g, "'"))}`];
+    case "line-height": return [LEADING[v] ? `leading-${LEADING[v]}` : `leading-${arbitrary(value)}`];
+    case "letter-spacing": return [`tracking-${arbitrary(value)}`];
+    case "box-shadow": return [SHADOWS[v] ? `shadow-${SHADOWS[v]}` : `shadow-${arbitrary(value)}`];
+    case "flex": {
+      const map = { "1": "flex-1", "1 1 0%": "flex-1", "1 1 auto": "flex-auto", auto: "flex-auto", "0 1 auto": "flex-initial", initial: "flex-initial", none: "flex-none" };
+      return [map[v] || `flex-${arbitrary(value)}`];
+    }
+    case "flex-grow": return [v === "1" ? "grow" : v === "0" ? "grow-0" : `grow-${arbitrary(value)}`];
+    case "flex-shrink": return [v === "1" ? "shrink" : v === "0" ? "shrink-0" : `shrink-${arbitrary(value)}`];
+    case "grid-template-columns": case "grid-template-rows": {
+      const p = prop.endsWith("columns") ? "grid-cols" : "grid-rows";
+      const m = /^repeat\((\d+),\s*(1fr|minmax\(0,\s*1fr\))\)$/.exec(v);
+      return [m ? `${p}-${m[1]}` : v === "none" ? `${p}-none` : `${p}-${arbitrary(value)}`];
+    }
+    case "grid-column": case "grid-row": {
+      const p = prop === "grid-column" ? "col" : "row";
+      const m = /^span\s+(\d+)(\s*\/\s*span\s+\1)?$/.exec(v);
+      return [m ? `${p}-span-${m[1]}` : v === "1 / -1" ? `${p}-span-full` : `${p}-${arbitrary(value)}`];
+    }
+    case "transition": return [v === "none" ? "transition-none" : `transition-${arbitrary(value)}`];
+    case "transform": return [v === "none" ? "transform-none" : `transform-${arbitrary(value)}`];
+    case "aspect-ratio": return [v === "1 / 1" || v === "1" ? "aspect-square" : v === "16 / 9" ? "aspect-video" : `aspect-${arbitrary(value)}`];
+    default: return [`[${prop}:${value.replace(/\s+/g, "_")}]`];
+  }
+}
+
+// Splits a declaration block on semicolons that are not inside parentheses or quotes (data URIs).
+function splitDeclarations(body) {
+  const out = [];
+  let depth = 0, quote = null, current = "";
+  for (const ch of body) {
+    if (quote) { if (ch === quote) quote = null; }
+    else if (ch === '"' || ch === "'") quote = ch;
+    else if (ch === "(") depth++;
+    else if (ch === ")") depth--;
+    else if (ch === ";" && depth === 0) { out.push(current); current = ""; continue; }
+    current += ch;
+  }
+  out.push(current);
+  return out;
+}
+
+// Minimal CSS parser: style rules (with their @media context, if any) plus other at-rules kept
+// verbatim as { raw }. Declarations keep the author's original text. Comments are stripped.
+function parseCss(css) {
+  const rules = [];
+  const text = css.replace(/\/\*[\s\S]*?\*\//g, "");
+  let i = 0;
+  const readBlock = start => {
+    let depth = 0;
+    for (let j = start; j < text.length; j++) {
+      if (text[j] === "{") depth++;
+      else if (text[j] === "}" && --depth === 0) return j;
+    }
+    return text.length;
+  };
+  const parseDeclarations = body => splitDeclarations(body).map(d => d.trim()).filter(Boolean).map(d => {
+    const idx = d.indexOf(":");
+    const important = /!important\s*$/i.test(d);
+    return { prop: d.slice(0, idx).trim().toLowerCase(), value: d.slice(idx + 1).replace(/!important\s*$/i, "").trim(), important };
+  }).filter(d => d.prop && d.value);
+  const walk = (from, to, media) => {
+    i = from;
+    while (i < to) {
+      const open = text.indexOf("{", i);
+      const semi = text.indexOf(";", i);
+      const start = text.slice(i, to).search(/\S/);
+      if (start === -1) break;
+      // Block-less at-rules such as @import or @charset.
+      if (text[i + start] === "@" && semi !== -1 && semi < to && (open === -1 || semi < open)) {
+        rules.push({ raw: text.slice(i + start, semi + 1) });
+        i = semi + 1;
+        continue;
+      }
+      if (open === -1 || open >= to) break;
+      const prelude = text.slice(i, open).trim();
+      const close = readBlock(open);
+      if (prelude.startsWith("@media")) {
+        const saved = close + 1;
+        walk(open + 1, close, prelude.slice(6).trim());
+        i = saved;
+        continue;
+      }
+      if (prelude.startsWith("@")) rules.push({ raw: text.slice(text.lastIndexOf("@", open), close + 1).trim(), media });
+      else if (prelude) rules.push({ selector: prelude, media, declarations: parseDeclarations(text.slice(open + 1, close)) });
+      i = close + 1;
+    }
+  };
+  walk(0, text.length, null);
+  return rules;
+}
+
+function mediaVariant(media) {
+  if (!media) return "";
+  if (/prefers-color-scheme:\s*dark/i.test(media)) return "dark:";
+  const min = /min-width:\s*(\d+)px/i.exec(media);
+  if (min) return `${BREAKPOINTS[min[1]] || `min-[${min[1]}px]`}:`;
+  const max = /max-width:\s*(\d+(?:\.\d+)?)px/i.exec(media);
+  if (max) {
+    const bp = BREAKPOINTS[Math.round(Number(max[1]))] || BREAKPOINTS[Math.round(Number(max[1])) + 1];
+    return bp ? `max-${bp}:` : `max-[${max[1]}px]:`;
+  }
+  return `[@media${arbitrary(media).slice(1, -1).replace(/^/, "_")}]:`;
+}
+
+// Splits ".btn:hover" into the base selector and its Tailwind variant prefix.
+function selectorVariant(selector) {
+  let base = selector, variants = "";
+  base = base.replace(/::?([\w-]+(?:\([^)]*\))?)$/g, (match, pseudo) => {
+    const variant = PSEUDO_VARIANTS[pseudo.toLowerCase()];
+    if (!variant) return match;
+    variants = `${variant}:${variants}`;
+    return "";
+  });
+  if (base !== selector && /::?[\w-]+(\([^)]*\))?$/.test(base)) {
+    const again = selectorVariant(base);
+    return { base: again.base, variants: again.variants + variants };
+  }
+  return { base: base.trim(), variants };
+}
+
+function cssToTailwind(css) {
+  const groups = new Map(); // base selector -> ordered class list
+  let declarations = 0, arbitraryCount = 0;
+  for (const rule of parseCss(css)) {
+    if (!rule.selector) continue;
+    const prefix = mediaVariant(rule.media);
+    for (const selector of rule.selector.split(",").map(s => s.trim()).filter(Boolean)) {
+      const { base, variants } = selectorVariant(selector);
+      const list = groups.get(base) || [];
+      for (const d of rule.declarations) {
+        declarations++;
+        for (const cls of declarationToClasses(d.prop, d.value)) {
+          if (cls.includes("[")) arbitraryCount++;
+          const full = `${prefix}${variants}${d.important ? "!" : ""}${cls}`;
+          const i = list.indexOf(full);
+          if (i !== -1) list.splice(i, 1);
+          list.push(full);
+        }
+      }
+      groups.set(base, list);
+    }
+  }
+  const classes = [...groups.values()].reduce((n, l) => n + l.length, 0);
+  return {
+    groups: [...groups].map(([selector, list]) => ({ selector, classes: list.join(" ") })),
+    stats: { selectors: groups.size, declarations, classes, arbitrary: arbitraryCount },
+  };
+}
+
+function formatTailwind(result) {
+  return result.groups.map(g => `/* ${g.selector} */\n${g.classes}`).join("\n\n");
+}
+
+// ── inline.js
+// CSS → inline style converter. Pure selector helpers are exported for tests;
+// inlineCss() needs a browser DOM (DOMParser) to match selectors.
+
+
+// Selectors that can never match a static email render stay in a <style> block.
+const DYNAMIC = /::?(hover|focus|focus-visible|focus-within|active|visited|link|target|checked|disabled|enabled|before|after|first-line|first-letter|placeholder|selection|marker)\b/i;
+
+function splitSelectors(text) {
+  const parts = [];
+  let depth = 0, quote = null, current = "";
+  for (const ch of text) {
+    if (quote) { if (ch === quote) quote = null; }
+    else if (ch === '"' || ch === "'") quote = ch;
+    else if (ch === "(" || ch === "[") depth++;
+    else if (ch === ")" || ch === "]") depth--;
+    else if (ch === "," && depth === 0) { parts.push(current.trim()); current = ""; continue; }
+    current += ch;
+  }
+  if (current.trim()) parts.push(current.trim());
+  return parts;
+}
+
+function isStaticSelector(selector) {
+  return !DYNAMIC.test(selector);
+}
+
+// Returns [ids, classes/attributes/pseudo-classes, elements/pseudo-elements].
+function specificity(selector) {
+  let ids = 0, classes = 0, elements = 0;
+  let s = selector.replace(/"[^"]*"|'[^']*'/g, "");
+  // :where() adds nothing; :is()/:not()/:has() take their most specific argument.
+  s = s.replace(/:where\((?:[^()]|\([^()]*\))*\)/gi, "");
+  s = s.replace(/:(is|not|has)\(((?:[^()]|\([^()]*\))*)\)/gi, (_, __, inner) => {
+    const best = splitSelectors(inner).map(specificity).sort(compareSpecificity).pop() || [0, 0, 0];
+    ids += best[0]; classes += best[1]; elements += best[2];
+    return "";
+  });
+  s = s.replace(/\[[^\]]*\]/g, () => { classes++; return ""; });
+  s = s.replace(/::[\w-]+(\([^)]*\))?/g, () => { elements++; return ""; });
+  s = s.replace(/#[\w-]+/g, () => { ids++; return ""; });
+  s = s.replace(/\.[\w-]+/g, () => { classes++; return ""; });
+  s = s.replace(/:[\w-]+(\([^)]*\))?/g, () => { classes++; return ""; });
+  elements += (s.match(/(^|[\s>+~])([a-z][\w-]*)/gi) || []).length;
+  return [ids, classes, elements];
+}
+
+function compareSpecificity(a, b) {
+  return a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
+}
+
+const serialize = decls => decls.map(d => `${d.prop}: ${d.value}${d.important ? " !important" : ""}`).join("; ");
+
+// Orders declarations by cascade precedence (lowest first) and keeps only the winning
+// occurrence of each property, so the author's shorthands and values survive untouched.
+function resolveCascade(decls) {
+  const sorted = [...decls].sort((a, b) => (a.important - b.important) || compareSpecificity(a.spec, b.spec) || a.order - b.order);
+  const winners = new Map();
+  for (const d of sorted) { winners.delete(d.prop); winners.set(d.prop, d); }
+  return [...winners.values()];
+}
+
+function inlineCss(html, { removeStyles = true, removeClasses = false } = {}) {
+  const isDocument = /<html[\s>]/i.test(html);
+  const doctype = (html.match(/<!doctype[^>]*>/i) || [""])[0];
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const matches = new Map(); // element -> declarations
+  const kept = [];
+  let order = 0;
+  // A fragment has no <html>/<body> in the output, so rules aimed at them stay in <style>.
+  const unreachable = el => !isDocument && (el === doc.body || el === doc.documentElement);
+
+  for (const styleEl of [...doc.querySelectorAll("style")]) {
+    for (const rule of parseCss(styleEl.textContent)) {
+      if (!rule.selector) { kept.push(rule.media ? `@media ${rule.media} { ${rule.raw} }` : rule.raw); continue; }
+      const block = `{ ${serialize(rule.declarations)} }`;
+      if (rule.media) { kept.push(`@media ${rule.media} { ${rule.selector} ${block} }`); continue; }
+      const leftovers = [];
+      for (const selector of splitSelectors(rule.selector)) {
+        let elements = null;
+        try { if (isStaticSelector(selector)) elements = [...doc.querySelectorAll(selector)]; } catch { /* invalid selector: keep it */ }
+        if (!elements || elements.some(unreachable)) { leftovers.push(selector); continue; }
+        const spec = specificity(selector);
+        for (const el of elements) {
+          const list = matches.get(el) || [];
+          for (const d of rule.declarations) list.push({ ...d, spec, order: order++ });
+          matches.set(el, list);
+        }
+      }
+      if (leftovers.length) kept.push(`${leftovers.join(", ")} ${block}`);
+    }
+    if (removeStyles) styleEl.remove();
+  }
+
+  let declarations = 0;
+  for (const [el, list] of matches) {
+    // Existing inline styles beat stylesheet rules unless those are !important.
+    for (const raw of splitDeclarations(el.getAttribute("style") || "")) {
+      const idx = raw.indexOf(":");
+      if (idx < 1) continue;
+      const important = /!important\s*$/i.test(raw);
+      list.push({ prop: raw.slice(0, idx).trim().toLowerCase(), value: raw.slice(idx + 1).replace(/!important\s*$/i, "").trim(), important, spec: [Infinity, 0, 0], order: order++ });
+    }
+    const resolved = resolveCascade(list);
+    el.setAttribute("style", serialize(resolved));
+    declarations += resolved.length;
+  }
+
+  if (removeClasses) doc.querySelectorAll("[class]").forEach(el => el.removeAttribute("class"));
+  if (removeStyles && kept.length) {
+    const style = doc.createElement("style");
+    style.textContent = `\n  ${kept.join("\n  ")}\n`;
+    doc.head.appendChild(style);
+  }
+
+  const headStyles = [...doc.head.querySelectorAll("style")].map(s => s.outerHTML).join("\n");
+  const output = isDocument
+    ? `${doctype ? `${doctype}\n` : ""}${doc.documentElement.outerHTML}`
+    : `${headStyles}${headStyles ? "\n" : ""}${doc.body.innerHTML}`;
+  return { html: output.trim(), stats: { elements: matches.size, declarations, kept: kept.length } };
+}
+
+// ── tools.js
+
+const INLINE_EXAMPLE = `<style>
+  body { margin: 0; font-family: Arial, sans-serif; }
+  .card { padding: 24px; border-radius: 12px; background-color: #f8f3ec; }
+  .card h1 { margin: 0 0 8px; font-size: 22px; color: #1c1d21; }
+  #cta { display: inline-block; padding: 12px 20px; background: #f4b506; color: #111; text-decoration: none; }
+  #cta:hover { background: #ffd801; }
+  p { line-height: 1.5; color: #555; }
+</style>
+<div class="card">
+  <h1>Your invoice is ready</h1>
+  <p style="color: #333">Thanks for your order. The receipt is attached.</p>
+  <a id="cta" href="#">View invoice</a>
+</div>`;
+
+const TAILWIND_EXAMPLES = {
+  "Flexbox card": `.card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1c1d21;
+}`,
+  "Responsive grid": `.grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1024px) {
+  .grid { grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+}`,
+  "Button with hover": `.button {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border: 1px solid #1c1d21;
+  border-radius: 9999px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #1c1d21;
+  color: white;
+}
+
+.button:focus-visible {
+  outline: 2px solid #f4b506;
+}`,
+};
+
+const plural = (n, word) => `${n} ${word}${n === 1 ? "" : word.endsWith("s") ? "es" : "s"}`;
+
+const tools = {
+  inline: {
+    hint: "Paste HTML with a <style> block. Inline styles appear instantly.",
+    inputLabel: "HTML with <style>",
+    outputLabel: "Inlined HTML",
+    heading: "Inliner options",
+    placeholder: "<style> .note { color: #333; } </style>\n<p class=\"note\">Hello</p>",
+    options: [
+      { key: "removeStyles", label: "Remove inlined <style>", value: true },
+      { key: "removeClasses", label: "Strip class attributes", value: false },
+    ],
+    examples: { Example: INLINE_EXAMPLE },
+    run(input, options) {
+      const { html, stats } = inlineCss(input, options);
+      const kept = stats.kept ? ` · ${plural(stats.kept, "rule")} kept in <style> (hover, media or pseudo)` : "";
+      return { output: html, status: `Inlined ${plural(stats.declarations, "declaration")} on ${plural(stats.elements, "element")}${kept}` };
+    },
+  },
+  tailwind: {
+    hint: "Paste CSS rules. Tailwind v4 classes appear instantly.",
+    inputLabel: "CSS",
+    outputLabel: "Tailwind v4 classes",
+    heading: "Try an example",
+    placeholder: ".card {\n  padding: 16px;\n  border-radius: 8px;\n}",
+    options: [],
+    examples: TAILWIND_EXAMPLES,
+    run(input) {
+      const result = cssToTailwind(input);
+      const { selectors, declarations, classes, arbitrary } = result.stats;
+      const extra = arbitrary ? ` · ${arbitrary} with arbitrary values` : "";
+      return { output: formatTailwind(result), status: `${plural(declarations, "declaration")} → ${plural(classes, "class")} across ${plural(selectors, "selector")}${extra}` };
+    },
+  },
+};
+
+// ── app.js
+
+// Where visitors can buy the maker a coffee. Empty hides every coffee link.
+const COFFEE_URL = "https://buymeacoffee.com/98kid";
+
+const CATALOG = [
+  { mode: "rem", pair: "PX ⇄ REM", title: "PX to REM", text: "Convert pixels to rem and back, against any root font size." },
+  { mode: "em", pair: "REM ⇄ EM", title: "REM to EM", text: "Work out em values from the root and parent font sizes." },
+  { mode: "vw", pair: "PX ⇄ VW", title: "PX to VW", text: "Turn pixel widths into viewport-width units, with common screen presets." },
+  { mode: "vh", pair: "PX ⇄ VH", title: "PX to VH", text: "Turn pixel heights into viewport-height units, with common screen presets." },
+  { mode: "inline", pair: "CSS → INLINE", title: "CSS to Inline", text: "Move <style> rules into inline style attributes for email templates." },
+  { mode: "tailwind", pair: "CSS → TAILWIND", title: "CSS to Tailwind", text: "Convert CSS rules, hover states and breakpoints into Tailwind v4 classes." },
+];
+
+const state = {
+  mode: "rem",
+  settings: {
+    root: 16,
+    parent: 16,
+    viewportWidth: window.innerWidth,
+    viewportHeight: window.innerHeight,
+    decimals: 3,
+  },
+  lastDirection: "toRight",
+  code: {},
+};
+
+const $ = (selector) => document.querySelector(selector);
+const tabs = [...document.querySelectorAll(".tab[data-mode]")];
+const leftInput = $("#left-value");
+const rightInput = $("#right-value");
+const leftUnit = $("#left-unit");
+const rightUnit = $("#right-unit");
+const leftLabel = $("#left-label");
+const rightLabel = $("#right-label");
+const settingsArea = $("#settings-area");
+const contextLine = $("#context-line");
+const formulaLine = $("#formula");
+const decimalChips = [...document.querySelectorAll("[data-decimals]")];
+const unitView = $("#unit-view");
+const codeView = $("#code-view");
+const codeInput = $("#code-input");
+const codeOutput = $("#code-output");
+const codeOptions = $("#code-options");
+const codeStatus = $("#code-status");
+const exampleButton = $("#code-example");
+const heroHint = $("#hero-hint");
+const unitHint = heroHint?.textContent ?? "";
+const copyButton = $("#copy-result");
+
+// Clipboard API is blocked in some sandboxed frames (like Figma plugins); fall back to execCommand.
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const area = Object.assign(document.createElement("textarea"), { value: text });
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand("copy");
+    area.remove();
+  }
+}
+
+function format(value) {
+  return (Number.isFinite(value) ? value : 0).toFixed(state.settings.decimals);
+}
+
+function syncFromLeft() {
+  state.lastDirection = "toRight";
+  rightInput.value = format(convert(state.mode, "toRight", leftInput.value, state.settings));
+  updateContext();
+}
+
+function syncFromRight() {
+  state.lastDirection = "toLeft";
+  leftInput.value = format(convert(state.mode, "toLeft", rightInput.value, state.settings));
+  updateContext();
+}
+
+// Settings changes recompute whichever field the user did not type into.
+function resync() {
+  if (state.lastDirection === "toLeft") syncFromRight();
+  else syncFromLeft();
+}
+
+function isActiveViewport(width, height) {
+  return width === state.settings.viewportWidth && height === state.settings.viewportHeight;
+}
+
+function viewportPresets() {
+  return `
+      <div class="presets presets--viewport" aria-label="Viewport presets">
+        ${VIEWPORT_PRESETS.map(({ width, height }) => `<button type="button" data-viewport="${width}x${height}" class="chip ${isActiveViewport(width, height) ? "is-active" : ""}">${width}×${height}</button>`).join("")}
+      </div>`;
+}
+
+function renderSettings() {
+  const fields = {
+    rem: `
+      <label class="control control--wide">Root font size
+        <span class="input-wrap input-wrap--small"><input id="root" type="number" min="1" step="1" value="${state.settings.root}"><b>px</b></span>
+      </label>
+      <div class="presets" aria-label="Root font presets">
+        ${[14, 16, 18, 20].map(value => `<button type="button" data-root="${value}" class="chip ${value === state.settings.root ? "is-active" : ""}">${value}px</button>`).join("")}
+      </div>`,
+    em: `
+      <label class="control">Root font size
+        <span class="input-wrap input-wrap--small"><input id="root" type="number" min="1" value="${state.settings.root}"><b>px</b></span>
+      </label>
+      <label class="control">Parent font size
+        <span class="input-wrap input-wrap--small"><input id="parent" type="number" min="1" value="${state.settings.parent}"><b>px</b></span>
+      </label>`,
+    vw: `
+      <label class="control control--wide">Viewport width
+        <span class="input-wrap input-wrap--small"><input id="viewportWidth" type="number" min="1" value="${state.settings.viewportWidth}"><b>px</b></span>
+      </label>
+      <button class="detect-button" type="button" id="detect-viewport">Use this window</button>${viewportPresets()}`,
+    vh: `
+      <label class="control control--wide">Viewport height
+        <span class="input-wrap input-wrap--small"><input id="viewportHeight" type="number" min="1" value="${state.settings.viewportHeight}"><b>px</b></span>
+      </label>
+      <button class="detect-button" type="button" id="detect-viewport">Use this window</button>${viewportPresets()}`,
+  };
+
+  settingsArea.innerHTML = fields[state.mode];
+  settingsArea.querySelectorAll("input").forEach(input => {
+    input.addEventListener("input", () => {
+      const value = Math.max(1, Number(input.value) || 1);
+      state.settings[input.id] = value;
+      settingsArea.querySelectorAll("[data-viewport]").forEach(chip => {
+        const [width, height] = chip.dataset.viewport.split("x").map(Number);
+        chip.classList.toggle("is-active", isActiveViewport(width, height));
+      });
+      resync();
+    });
+  });
+  settingsArea.querySelectorAll("[data-root]").forEach(button => {
+    button.addEventListener("click", () => {
+      state.settings.root = Number(button.dataset.root);
+      renderSettings();
+      resync();
+    });
+  });
+  settingsArea.querySelectorAll("[data-viewport]").forEach(button => {
+    button.addEventListener("click", () => {
+      [state.settings.viewportWidth, state.settings.viewportHeight] = button.dataset.viewport.split("x").map(Number);
+      renderSettings();
+      resync();
+    });
+  });
+  $("#detect-viewport")?.addEventListener("click", () => {
+    const key = state.mode === "vw" ? "viewportWidth" : "viewportHeight";
+    state.settings[key] = state.mode === "vw" ? window.innerWidth : window.innerHeight;
+    renderSettings();
+    resync();
+  });
+}
+
+function updateContext() {
+  const fromLeft = state.lastDirection === "toRight";
+  const source = fromLeft ? leftInput.value : rightInput.value;
+  const result = fromLeft ? rightInput.value : leftInput.value;
+  const { expression, worked } = describe(state.mode, state.lastDirection, source, result, state.settings);
+  formulaLine.textContent = expression;
+  contextLine.textContent = worked;
+}
+
+// Output wraps only between tokens: each word (a class name, an attribute) is kept whole, since
+// browsers would otherwise break "gap-1" after its hyphen. Very long tokens may still wrap.
+function showOutput(text) {
+  codeOutput.replaceChildren(...text.split(/(\s+)/).filter(Boolean).map(part => {
+    if (/^\s/.test(part) || part.length > 48) return document.createTextNode(part);
+    return Object.assign(document.createElement("span"), { textContent: part });
+  }));
+}
+
+function runTool() {
+  const tool = tools[state.mode];
+  const input = codeInput.value;
+  state.code[state.mode].input = input;
+  if (!input.trim()) {
+    showOutput("");
+    codeStatus.textContent = "Paste code on the left, or load an example.";
+    return;
+  }
+  try {
+    const { output, status } = tool.run(input, state.code[state.mode].options);
+    showOutput(output);
+    codeStatus.textContent = status;
+  } catch (error) {
+    codeStatus.textContent = `Could not convert: ${error.message}`;
+  }
+}
+
+function renderCodeOptions() {
+  const tool = tools[state.mode];
+  const { options } = state.code[state.mode];
+  const examples = Object.keys(tool.examples);
+  const toggles = tool.options.map(o => `<button type="button" class="chip ${options[o.key] ? "is-active" : ""}" data-option="${o.key}" aria-pressed="${options[o.key]}">${o.label.replace(/</g, "&lt;")}</button>`);
+  const exampleChips = examples.length > 1 ? examples.map(name => `<button type="button" class="chip" data-example="${name}">${name}</button>`) : [];
+  codeOptions.innerHTML = [...toggles, ...exampleChips].join("");
+  exampleButton.hidden = examples.length > 1;
+  codeOptions.querySelectorAll("[data-option]").forEach(chip => chip.addEventListener("click", () => {
+    options[chip.dataset.option] = !options[chip.dataset.option];
+    renderCodeOptions();
+    runTool();
+  }));
+  codeOptions.querySelectorAll("[data-example]").forEach(chip => chip.addEventListener("click", () => loadExample(chip.dataset.example)));
+}
+
+function loadExample(name = Object.keys(tools[state.mode].examples)[0]) {
+  codeInput.value = tools[state.mode].examples[name];
+  runTool();
+}
+
+function showTool(mode) {
+  const tool = tools[mode];
+  state.code[mode] ??= { input: tool.examples[Object.keys(tool.examples)[0]], options: Object.fromEntries(tool.options.map(o => [o.key, o.value])) };
+  $("#code-input-label").textContent = tool.inputLabel;
+  $("#code-output-label").textContent = tool.outputLabel;
+  $("#code-heading").textContent = tool.heading;
+  codeInput.placeholder = tool.placeholder;
+  codeInput.value = state.code[mode].input;
+  if (heroHint) heroHint.textContent = tool.hint;
+  renderCodeOptions();
+  runTool();
+}
+
+function setMode(mode) {
+  state.mode = mode;
+  document.documentElement.dataset.mode = mode;
+  tabs.forEach(tab => tab.classList.toggle("is-active", tab.dataset.mode === mode));
+  const isTool = mode in tools;
+  unitView.hidden = isTool;
+  codeView.hidden = !isTool;
+  if (isTool) return showTool(mode);
+  if (heroHint) heroHint.textContent = unitHint;
+  const c = converters[mode];
+  leftLabel.textContent = c.leftLabel;
+  rightLabel.textContent = c.rightLabel;
+  leftUnit.textContent = c.leftUnit;
+  rightUnit.textContent = c.rightUnit;
+  leftInput.value = c.defaultLeft;
+  state.lastDirection = "toRight";
+  renderSettings();
+  syncFromLeft();
+}
+
+tabs.forEach(tab => tab.addEventListener("click", () => {
+  setMode(tab.dataset.mode);
+  try { history.replaceState(null, "", `#/tool/${tab.dataset.mode}`); } catch { /* sandboxed frame (Figma plugin) */ }
+}));
+decimalChips.forEach(chip => chip.addEventListener("click", () => {
+  state.settings.decimals = Number(chip.dataset.decimals);
+  decimalChips.forEach(other => other.classList.toggle("is-active", other === chip));
+  resync();
+}));
+leftInput.addEventListener("input", syncFromLeft);
+rightInput.addEventListener("input", syncFromRight);
+$("#swap").addEventListener("click", () => {
+  const previous = leftInput.value;
+  leftInput.value = rightInput.value;
+  rightInput.value = previous;
+  syncFromLeft();
+});
+copyButton.addEventListener("click", async () => {
+  const c = converters[state.mode];
+  await copyText(`${rightInput.value}${c.rightUnit}`);
+  copyButton.textContent = "Copied";
+  setTimeout(() => copyButton.textContent = "Copy result", 1200);
+});
+
+codeInput.addEventListener("input", runTool);
+exampleButton.addEventListener("click", () => loadExample());
+$("#code-clear").addEventListener("click", () => {
+  codeInput.value = "";
+  runTool();
+  codeInput.focus();
+});
+const copyCodeButton = $("#copy-code");
+copyCodeButton.addEventListener("click", async () => {
+  await copyText(codeOutput.textContent);
+  copyCodeButton.textContent = "Copied";
+  setTimeout(() => copyCodeButton.textContent = "Copy result", 1200);
+});
+
+const escapeHtml = text => text.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+
+if ($("#tool-grid")) $("#tool-grid").innerHTML = [
+  ...CATALOG.map(t => `
+    <a class="tool-card" href="#/tool/${t.mode}" style="--card-accent: var(--c-${t.mode}); --card-text: var(--t-${t.mode}); --card-ink: var(--i-${t.mode})">
+      <span class="tool-card__tab">${t.pair}</span>
+      <span class="tool-card__body">
+        <strong>${t.title}</strong>
+        <span>${escapeHtml(t.text)}</span>
+        <em>Open tool <span aria-hidden="true">→</span></em>
+      </span>
+    </a>`),
+  `<div class="tool-card tool-card--soon"><span class="tool-card__body"><strong>More on the way</strong><span>New calculators appear here as soon as they're ready.</span></span></div>`,
+].join("");
+
+document.querySelectorAll("[data-coffee]").forEach(link => {
+  if (COFFEE_URL) link.href = COFFEE_URL;
+  else link.hidden = true;
+});
+
+// Hash routes: #/ (home), #/tool/<mode> (home with a tool open), #/tools, #/about.
+function route() {
+  const [, view = "", param] = location.hash.split("/");
+  const name = view === "tools" || view === "about" ? view : "home";
+  document.querySelectorAll("[data-view]").forEach(el => el.hidden = el.dataset.view !== name);
+  document.querySelectorAll("[data-route]").forEach(link => {
+    if (link.dataset.route === name) link.setAttribute("aria-current", "page");
+    else link.removeAttribute("aria-current");
+  });
+  document.title = { home: "CSS Toolkit", tools: "All tools · CSS Toolkit", about: "About · CSS Toolkit" }[name];
+  if (view === "tool" && (param in converters || param in tools)) setMode(param);
+  window.scrollTo(0, 0);
+}
+
+
+window.addEventListener("hashchange", route);
+setMode("rem");
+route();
+
+// ── figma-plugin/src/bridge.js
+// Figma bridge (plugin UI only): fills the tools from the selected layer, sizes the plugin window
+// to its content, and routes external links and copy notices through the main thread.
+
+const post = message => parent.postMessage({ pluginMessage: message }, "*");
+const selectionBar = $("#selection-bar");
+let selection = { node: null, count: 0 };
+
+const px = value => `${Number(value.toFixed(2))}px`;
+const slug = name => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "layer";
+const escapeText = text => String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+
+function cssRule(node) {
+  const body = Object.entries(node.css || {}).map(([prop, value]) => `  ${prop}: ${value};`).join("\n");
+  return `.${slug(node.name)} {\n${body}\n}`;
+}
+
+// Actions that make sense for the open tool, given what the selected layer has.
+function actionsFor(node) {
+  const mode = state.mode;
+  const actions = [];
+  const hasCss = node.css && Object.keys(node.css).length > 0;
+  if (mode === "rem" || mode === "vw" || mode === "vh") {
+    if (node.fontSize) actions.push({ id: "font", label: `Font ${px(node.fontSize)}` });
+    if (node.width !== null) actions.push({ id: "width", label: `W ${px(node.width)}` });
+    if (node.height !== null) actions.push({ id: "height", label: `H ${px(node.height)}` });
+  } else if (mode === "em") {
+    if (node.fontSize) actions.push({ id: "parent", label: `Parent font ${px(node.fontSize)}` });
+  } else if (hasCss) {
+    actions.push({ id: "css", label: "Use layer CSS" });
+  }
+  return actions;
+}
+
+function apply(id) {
+  const node = selection.node;
+  if (!node) return;
+  if (id === "font" || id === "width" || id === "height") {
+    const value = id === "font" ? node.fontSize : node[id];
+    leftInput.value = Number(value.toFixed(2));
+    syncFromLeft();
+  } else if (id === "parent") {
+    const parentInput = $("#parent");
+    parentInput.value = node.fontSize;
+    parentInput.dispatchEvent(new Event("input"));
+  } else if (id === "css") {
+    const rule = cssRule(node);
+    codeInput.value = state.mode === "inline"
+      ? `<style>\n${rule}\n</style>\n<div class="${slug(node.name)}">${escapeText(node.name)}</div>`
+      : rule;
+    runTool();
+  }
+}
+
+// The value most people want from a fresh selection in each tool.
+function autoApply() {
+  const node = selection.node;
+  if (!node) return;
+  const preferred = { rem: node.fontSize ? "font" : "width", vw: "width", vh: "height", em: "parent", inline: "css", tailwind: "css" }[state.mode];
+  if (actionsFor(node).some(a => a.id === preferred)) apply(preferred);
+}
+
+function renderSelection() {
+  const node = selection.node;
+  if (!node) {
+    selectionBar.innerHTML = `<span class="selection-empty">Select a layer to fill values from it.</span>`;
+    return;
+  }
+  const size = node.width !== null ? ` · ${Number(node.width.toFixed(2))} × ${Number(node.height.toFixed(2))}` : "";
+  const more = selection.count > 1 ? ` <small>(+${selection.count - 1} more, using the first)</small>` : "";
+  const actions = actionsFor(node);
+  selectionBar.innerHTML = `
+    <div class="selection-name"><b>${escapeText(node.name)}</b>${size}${more}</div>
+    ${actions.length ? `<div class="selection-actions">${actions.map(a => `<button type="button" class="chip" data-apply="${a.id}">${a.label}</button>`).join("")}</div>` : `<span class="selection-empty">Nothing to use from this layer in this tool.</span>`}`;
+  selectionBar.querySelectorAll("[data-apply]").forEach(button => button.addEventListener("click", () => apply(button.dataset.apply)));
+}
+
+// In Figma the viewport is the selected layer's frame, not the plugin window. Until something is
+// selected, assume a common 1440 × 900 desktop frame.
+state.settings.viewportWidth = 1440;
+state.settings.viewportHeight = 900;
+
+function useFrameAsViewport() {
+  const frame = selection.node && selection.node.frame;
+  if (!frame) return false;
+  state.settings.viewportWidth = Math.round(frame.width);
+  state.settings.viewportHeight = Math.round(frame.height);
+  return true;
+}
+
+// Swap the site's "Use this window" for "Use frame size" whenever the settings re-render.
+const renderSiteSettings = renderSettings;
+renderSettings = function () {
+  renderSiteSettings();
+  const detect = $("#detect-viewport");
+  if (!detect) return;
+  const frame = selection.node && selection.node.frame;
+  const button = detect.cloneNode(false);
+  button.textContent = frame ? `Use frame "${frame.name}"` : "Use frame size";
+  button.title = frame ? `${frame.width} × ${frame.height}` : "Select a layer inside a frame";
+  button.disabled = !frame;
+  button.addEventListener("click", () => { if (useFrameAsViewport()) { renderSettings(); resync(); } });
+  detect.replaceWith(button);
+};
+
+window.addEventListener("message", event => {
+  const message = event.data && event.data.pluginMessage;
+  if (!message || message.type !== "selection") return;
+  selection = message;
+  useFrameAsViewport();
+  if (!(state.mode in tools)) renderSettings();
+  renderSelection();
+  autoApply();
+  if (!(state.mode in tools)) resync();
+});
+
+tabs.forEach(tab => tab.addEventListener("click", renderSelection));
+
+// Links leave the sandboxed frame through figma.openExternal.
+document.addEventListener("click", event => {
+  const link = event.target.closest("a[href^='https://']");
+  if (!link) return;
+  event.preventDefault();
+  post({ type: "open", url: link.href });
+});
+
+[copyButton, $("#copy-code")].forEach(button => button.addEventListener("click", () => post({ type: "notify", text: "Copied to clipboard" })));
+
+const shell = document.querySelector("main");
+new ResizeObserver(() => post({ type: "resize", height: shell.offsetHeight })).observe(shell);
+
+if (!(state.mode in tools)) { renderSettings(); resync(); }
+renderSelection();
+post({ type: "ready" });
+
+  </script>
+</body>
+</html>
