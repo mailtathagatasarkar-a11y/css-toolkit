@@ -1,0 +1,41 @@
+<!doctype html>
+<!-- 4:5 portrait poster of the listing cover, for the portfolio's AI playground card (1080 × 1350).
+     Renders the real plugin UI (../../ui.html) under the headline. -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 1080px; height: 1350px; overflow: hidden; }
+    body { position: relative; padding: 92px 88px 0; background: radial-gradient(ellipse 80% 55% at 70% 88%, #3c3528 0%, transparent 70%), linear-gradient(160deg, #25282b 0%, #171b1e 58%, #111518 100%); color: #f5f4ef; font-family: "DM Sans", sans-serif; }
+    .brand { display: flex; align-items: center; gap: 18px; font-family: "Space Grotesk", sans-serif; font-size: 38px; font-weight: 700; }
+    .brand img { width: 64px; height: 64px; border-radius: 14px; }
+    .kicker { display: flex; align-items: center; gap: 16px; margin-top: 70px; color: #f4b506; font-size: 24px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    .kicker::before { content: ""; width: 52px; height: 3px; background: #f4b506; }
+    h1 { margin: 22px 0 0; font-family: "Space Grotesk", sans-serif; font-size: 108px; line-height: .96; letter-spacing: -.045em; }
+    .chips { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 40px; max-width: 900px; }
+    .chips span { padding: 12px 18px; border-radius: 12px; background: var(--c); color: var(--t, #111); font-size: 22px; font-weight: 700; letter-spacing: .06em; }
+    .window { position: absolute; left: 88px; right: 88px; top: 790px; height: 640px; overflow: hidden; border: 1px solid rgba(255,255,255,.08); border-radius: 22px 22px 0 0; background: #2c2c2c; box-shadow: 0 40px 120px rgba(0,0,0,.55); }
+    .window header { display: flex; align-items: center; gap: 12px; height: 60px; padding: 0 22px; border-bottom: 1px solid rgba(255,255,255,.08); color: #e6e6e6; font-size: 20px; font-weight: 600; }
+    .window header i { width: 26px; height: 26px; border-radius: 6px; background: url("../../../favicon.svg") center / cover; }
+    .window header b { margin-left: auto; color: #8c8d90; font-weight: 400; }
+    iframe { display: block; width: 400px; height: 460px; border: 0; transform: scale(2.26); transform-origin: 0 0; }
+  </style>
+</head>
+<body>
+  <div class="brand"><img src="../../../favicon.svg" alt="">CSS Toolkit</div>
+  <div class="kicker">Web app · Figma plugin</div>
+  <h1>Every CSS<br>calculator, right<br>on your layers</h1>
+  <div class="chips">
+    <span style="--c:#f4b506">PX ⇄ REM</span><span style="--c:#ff5102">REM ⇄ EM</span><span style="--c:#b2d8d9">PX ⇄ VW</span><span style="--c:#014a2c;--t:#effff7">PX ⇄ VH</span><span style="--c:#9d92b8">CSS → INLINE</span><span style="--c:#8f8b1c">CSS → TAILWIND</span>
+  </div>
+  <div class="window"><header><i></i>CSS Toolkit<b>✕</b></header><iframe id="plugin" src="../../ui.html"></iframe></div>
+  <script>
+    plugin.addEventListener("load", () => {
+      const w = plugin.contentWindow;
+      w.dispatchEvent(new w.MessageEvent("message", { data: { pluginMessage: { type: "selection", count: 1, node: { name: "Heading", type: "TEXT", width: 540, height: 58, fontSize: 48, css: {}, variables: {}, frame: { name: "Desktop", width: 1440, height: 900 } } } } }));
+    });
+  </script>
+</body>
+</html>
