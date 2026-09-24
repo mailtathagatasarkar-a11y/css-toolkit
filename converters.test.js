@@ -81,3 +81,19 @@ test("resolves the cascade by importance, specificity, then source order", () =>
   ];
   assert.deepEqual(resolveCascade(decls).map(d => `${d.prop}:${d.value}`), ["padding:24px", "color:#333", "background:#f4b506"]);
 });
+
+test("uses the fewest classes for real Figma padding and radius values", () => {
+  assert.deepEqual(declarationToClasses("padding", "28px 32px 24px 32px"), ["pt-7", "px-8", "pb-6"]);
+  assert.deepEqual(declarationToClasses("padding", "12px 20px 12px 16px"), ["py-3", "pr-5", "pl-4"]);
+  assert.deepEqual(declarationToClasses("border-radius", "16px 16px 0 0"), ["rounded-t-2xl"]);
+  assert.deepEqual(declarationToClasses("border-radius", "0 16px 16px 16px"), ["rounded-2xl", "rounded-tl-none"]);
+  assert.deepEqual(declarationToClasses("border-radius", "8px 0 0 8px"), ["rounded-l-lg"]);
+  assert.deepEqual(declarationToClasses("border-radius", "4px 8px 12px 16px"), ["rounded-tl", "rounded-tr-lg", "rounded-br-xl", "rounded-bl-2xl"]);
+  assert.deepEqual(declarationToClasses("border-radius", "999px"), ["rounded-full"]);
+});
+
+test("keeps Figma variables as var() with a fallback value", () => {
+  assert.deepEqual(declarationToClasses("background", "var(--color-accent-yellow, #F4B506)"), ["bg-[var(--color-accent-yellow,#F4B506)]"]);
+  assert.deepEqual(declarationToClasses("border", "1px solid var(--color-bg-tab, #131313)"), ["border", "border-[var(--color-bg-tab,#131313)]"]);
+  assert.deepEqual(declarationToClasses("border-radius", "var(--radius-sm, 8px)"), ["rounded-[var(--radius-sm,8px)]"]);
+});

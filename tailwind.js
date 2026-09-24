@@ -92,15 +92,35 @@ function box(prefix, value) {
   const make = (p, v) => (prefix === "m" ? withSign(p, v) : `${p}-${spacing(v)}`);
   if (t === r && r === b && b === l) return [make(prefix, t)];
   if (t === b && r === l) return [make(`${prefix}y`, t), make(`${prefix}x`, r)];
+  if (r === l) return [make(`${prefix}t`, t), make(`${prefix}x`, r), make(`${prefix}b`, b)];
+  if (t === b) return [make(`${prefix}y`, t), make(`${prefix}r`, r), make(`${prefix}l`, l)];
   return [make(`${prefix}t`, t), make(`${prefix}r`, r), make(`${prefix}b`, b), make(`${prefix}l`, l)];
 }
 
+function roundedClass(side, value) {
+  const v = value.trim();
+  const px = toPx(v);
+  const size = v === "50%" || /^\d{3,}px$/.test(v) ? "full" : px !== null && px in RADII ? RADII[px] : arbitrary(v);
+  return size ? `rounded${side}-${size}` : `rounded${side}`;
+}
+
+// 1–4 value radii (tl tr br bl) become the fewest side or corner utilities; zero corners are omitted.
 function radius(value) {
   const v = value.trim();
-  if (v === "50%" || v === "9999px" || /^\d{3,}px$/.test(v)) return "rounded-full";
-  const px = toPx(v);
-  if (px !== null && px in RADII) return RADII[px] ? `rounded-${RADII[px]}` : "rounded";
-  return `rounded-${arbitrary(v)}`;
+  if (v.includes("/")) return [`rounded-${arbitrary(v)}`];
+  const [a, b = a, c = a, d = b] = v.split(/\s+(?![^(]*\))/);
+  const corners = { tl: a, tr: b, br: c, bl: d };
+  const pick = (side, val) => (toPx(val) === 0 ? [] : [roundedClass(side, val)]);
+  if (a === b && b === c && c === d) return [roundedClass("", a)];
+  if (a === b && c === d) return [...pick("-t", a), ...pick("-b", c)];
+  if (a === d && b === c) return [...pick("-l", a), ...pick("-r", b)];
+  const values = Object.values(corners);
+  const common = values.find(x => values.filter(y => y === x).length === 3);
+  if (common) {
+    const [corner, odd] = Object.entries(corners).find(([, x]) => x !== common);
+    return [roundedClass("", common), roundedClass(`-${corner}`, odd)];
+  }
+  return Object.entries(corners).flatMap(([corner, val]) => pick(`-${corner}`, val));
 }
 
 function border(value) {
@@ -177,7 +197,7 @@ export function declarationToClasses(prop, rawValue) {
       const side = SIDES[prop.slice(7)];
       return border(value).map(c => c === "border" ? `border-${side}` : c.replace(/^border-(\d)/, `border-${side}-$1`).replace(/^border-(\[\d)/, `border-${side}-$1`));
     }
-    case "border-radius": return [radius(value)];
+    case "border-radius": return radius(value);
     case "font-size": { const px = toPx(value); return [px !== null && FONT_SIZES[px] ? `text-${FONT_SIZES[px]}` : `text-${arbitrary(value)}`]; }
     case "font-weight": return [FONT_WEIGHTS[v] ? `font-${FONT_WEIGHTS[v]}` : v === "bold" ? "font-bold" : v === "normal" ? "font-normal" : `font-${arbitrary(value)}`];
     case "font-family": return [`font-${arbitrary(value.replace(/["']/g, "'"))}`];

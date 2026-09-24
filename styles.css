@@ -113,9 +113,8 @@ h1 { margin: 14px 0 2px; font-family: "Space Grotesk", sans-serif; font-size: cl
 .hero p { margin: 10px 0 0; color: var(--muted); font-size: 17px; }
 
 .calculator { width: min(820px, 100%); margin: 72px auto 0; }
-/* Tabs run 20px behind the panel so the panel's rounded corners sit over tab colour, not background.
-   The active tab rises above the panel; its concave 6px fillets (matching the reference union) are vector masks that overlap
-   the tab and panel by 1px so no anti-aliased seam can appear at fractional column widths. */
+/* Tabs run 20px behind the panel so the panel's rounded corners sit over tab colour, not background;
+   the active tab rises above the panel. */
 .tabs { --tab-overlap: 20px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; align-items: end; margin-bottom: calc(var(--tab-overlap) * -1); }
 /* Index-divider tabs: a flat top with S-curved sides that rise tangentially from the panel line,
    so the active tab and the panel read as one continuous shape. The curves are fixed-size paths

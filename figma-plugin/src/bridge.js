@@ -9,8 +9,18 @@ const px = value => `${Number(value.toFixed(2))}px`;
 const slug = name => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "layer";
 const escapeText = text => String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
 
-function cssRule(node) {
-  const body = Object.entries(node.css || {}).map(([prop, value]) => `  ${prop}: ${value};`).join("\n");
+// Figma writes bound variables as var(--name). Email clients mostly ignore var(), so inlining uses
+// the plain value; Tailwind keeps the token with a fallback: var(--color-accent, #F4B506).
+function withVariables(value, variables, keepToken) {
+  return value.replace(/var\((--[\w-]+)\)/g, (match, name) => {
+    if (!(name in variables)) return match;
+    return keepToken ? `var(${name}, ${variables[name]})` : variables[name];
+  });
+}
+
+function cssRule(node, keepToken) {
+  const variables = node.variables || {};
+  const body = Object.entries(node.css || {}).map(([prop, value]) => `  ${prop}: ${withVariables(value, variables, keepToken)};`).join("\n");
   return `.${slug(node.name)} {\n${body}\n}`;
 }
 
@@ -43,7 +53,7 @@ function apply(id) {
     parentInput.value = node.fontSize;
     parentInput.dispatchEvent(new Event("input"));
   } else if (id === "css") {
-    const rule = cssRule(node);
+    const rule = cssRule(node, state.mode === "tailwind");
     codeInput.value = state.mode === "inline"
       ? `<style>\n${rule}\n</style>\n<div class="${slug(node.name)}">${escapeText(node.name)}</div>`
       : rule;
