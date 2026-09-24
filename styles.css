@@ -110,7 +110,7 @@ a.tool-card:hover .tool-card__body { transform: translateY(-2px); border-color: 
 h1 { margin: 14px 0 2px; font-family: "Space Grotesk", sans-serif; font-size: clamp(36px, 5vw, 56px); line-height: 1; letter-spacing: -.04em; }
 .hero p { margin: 10px 0 0; color: var(--muted); font-size: 17px; }
 
-.calculator { width: min(760px, 100%); margin: 72px auto 0; }
+.calculator { width: min(820px, 100%); margin: 72px auto 0; }
 /* Tabs run 20px behind the panel so the panel's rounded corners sit over tab colour, not background.
    The active tab rises above the panel; its concave 6px fillets (matching the reference union) are vector masks that overlap
    the tab and panel by 1px so no anti-aliased seam can appear at fractional column widths. */
@@ -119,7 +119,7 @@ h1 { margin: 14px 0 2px; font-family: "Space Grotesk", sans-serif; font-size: cl
    so the active tab and the panel read as one continuous shape. The curves are fixed-size paths
    (the right one mirrored); each foot reaches --foot past the tab's edge and overlaps the body
    and panel by 1px, so no seam can show. */
-.tab { --tab-bg: #131313; --run: 24px; --foot: 6px; position: relative; isolation: isolate; border: 0; min-height: calc(44px + var(--tab-overlap)); padding: 0 calc(var(--run) * .5) var(--tab-overlap); background: transparent; color: #929397; font-size: 10.5px; font-weight: 700; line-height: 1.2; letter-spacing: .04em; cursor: pointer; transition: min-height .2s ease, color .2s ease; }
+.tab { --tab-bg: #131313; --run: 24px; --foot: 6px; position: relative; isolation: isolate; border: 0; min-height: calc(44px + var(--tab-overlap)); padding: 0 calc(var(--run) * .5) var(--tab-overlap); background: transparent; color: #929397; font-size: 10px; font-weight: 700; line-height: 1.2; letter-spacing: .04em; cursor: pointer; transition: min-height .2s ease, color .2s ease; }
 .tab:hover { color: #d5d5d3; }
 .tab.is-active { --tab-bg: var(--accent); --run: 30px; z-index: 2; min-height: calc(52px + var(--tab-overlap)); color: var(--on-accent); }
 .tab-shape-body, .tab-shape-left, .tab-shape-right { position: absolute; z-index: -1; background: var(--tab-bg); pointer-events: none; }
@@ -133,6 +133,9 @@ h1 { margin: 14px 0 2px; font-family: "Space Grotesk", sans-serif; font-size: cl
 .tab:first-child .tab-shape-left, .tab:last-child .tab-shape-right { display: none; }
 .tab:first-child .tab-shape-body { left: 0; border-top-left-radius: 12px; }
 .tab:last-child .tab-shape-body { right: 0; border-top-right-radius: 12px; }
+/* Outer labels align to the straight outer edges; inner labels stay centred between the curves. */
+.tab:first-child { padding-left: 18px; text-align: left; }
+.tab:last-child { padding-right: 18px; text-align: right; }
 .panel { position: relative; z-index: 1; padding: 34px 32px 28px; border-radius: 16px; background: var(--accent); color: var(--on-accent); box-shadow: 0 28px 70px rgba(0,0,0,.22); }
 /* Value blocks share the row's two tracks (label, field) so the swap sits dead centre on the field row. */
 .conversion-row { display: grid; grid-template-columns: 1fr 54px 1fr; grid-template-rows: auto auto; gap: 8px 16px; }
@@ -202,6 +205,7 @@ input::-webkit-inner-spin-button { appearance: none; }
   .calculator { margin-top: 48px; }
   .tabs { gap: 3px; }
   .tab, .tab.is-active { --run: 10px; --foot: 4px; padding: 0 3px var(--tab-overlap); font-size: 9px; letter-spacing: .02em; }
+  .tab:first-child, .tab:last-child { padding-inline: 8px; text-align: center; }
   .tab-shape-left, .tab-shape-right { clip-path: path("M0 44C7 44 7 0 14 0H15V45H0Z"); }
   .tab.is-active .tab-shape-left, .tab.is-active .tab-shape-right { clip-path: path("M0 52C7 52 7 0 14 0H15V53H0Z"); }
   .code-row { grid-template-columns: 1fr; grid-template-rows: none; }
