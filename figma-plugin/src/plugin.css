@@ -15,6 +15,6 @@ body.plugin { min-height: 0; }
 .plugin .calculator { margin-top: 0; }
 .plugin .detect-button { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .plugin .detect-button:disabled { opacity: .45; cursor: default; }
-.plugin-footer { display: flex; justify-content: center; gap: 10px; margin-top: 16px; font-size: 11px; }
+.plugin-footer { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px; margin-top: 16px; font-size: 11px; }
 .plugin-footer a { color: #8c8d90; text-decoration: none; }
 .plugin-footer a:hover { color: #f5f4ef; }

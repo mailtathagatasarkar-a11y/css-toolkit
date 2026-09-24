@@ -100,6 +100,8 @@ button { color: inherit; }
 a.tool-card:hover .tool-card__body { transform: translateY(-2px); border-color: color-mix(in srgb, var(--card-accent) 60%, transparent); border-top-color: var(--card-accent); }
 .tool-card--soon { padding-top: 30px; }
 .tool-card--soon .tool-card__body { border: 1px dashed rgba(255,255,255,.14); border-radius: 16px; background: transparent; }
+.tool-card--soon .tool-card__body em { color: #f5f4ef; }
+a.tool-card--soon:hover .tool-card__body { border-color: rgba(255,255,255,.4); }
 .about { max-width: 640px; margin: 36px 0 0; color: #c9cacc; font-size: 17px; line-height: 1.7; }
 .about p { margin: 0 0 18px; }
 .about strong { color: #f5f4ef; }

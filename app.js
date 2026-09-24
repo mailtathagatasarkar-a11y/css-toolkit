@@ -297,7 +297,7 @@ if ($("#tool-grid")) $("#tool-grid").innerHTML = [
         <em>Open tool <span aria-hidden="true">→</span></em>
       </span>
     </a>`),
-  `<div class="tool-card tool-card--soon"><span class="tool-card__body"><strong>More on the way</strong><span>New calculators appear here as soon as they're ready.</span></span></div>`,
+  `<a class="tool-card tool-card--soon" href="https://github.com/mailtathagatasarkar-a11y/css-toolkit/issues/new?title=Calculator%20request%3A%20&labels=calculator%20request" target="_blank" rel="noreferrer"><span class="tool-card__body"><strong>More on the way</strong><span>Need a calculator that isn't here? Ask for it and it may be the next one built.</span><em>Request a calculator <span aria-hidden="true">↗</span></em></span></a>`,
 ].join("");
 
 document.querySelectorAll("[data-coffee]").forEach(link => {
