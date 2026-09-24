@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CSS Toolkit: free, instant PX, REM, EM, VW and VH converters, plus CSS to inline styles and CSS to Tailwind classes. Runs entirely in your browser.">
+  <title>CSS Toolkit</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="./favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <meta name="theme-color" content="#15191c">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="#/" aria-label="CSS Toolkit home"><img src="./favicon.svg" alt="" width="30" height="30"><span>CSS Toolkit</span></a>
+      <nav class="site-nav" aria-label="Site">
+        <a href="#/" data-route="home">Home</a>
+        <a href="#/tools" data-route="tools">All tools</a>
+        <a href="#/about" data-route="about">About</a>
+        <a class="coffee-button" data-coffee href="#" target="_blank" rel="noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5zM16 10h1.5a2.5 2.5 0 0 1 0 5H16M8 3v2M11 3v2M14 3v2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="coffee-long">Buy me a coffee</span><span class="coffee-short">Coffee</span> <span aria-hidden="true">↗</span></a>
+      </nav>
+    </header>
+
+    <div data-view="home">
+    <header class="hero">
+      <div class="eyebrow"><span></span> Free · Runs in your browser</div>
+      <h1>CSS Toolkit</h1>
+      <p id="hero-hint">Type into either field. The other updates instantly.</p>
+    </header>
+
+    <section class="calculator" aria-label="CSS converters">
+      <nav class="tabs" aria-label="Conversion type">
+        <button class="tab is-active" data-mode="rem" type="button"><span class="tab-shape-left" aria-hidden="true"></span><span class="tab-shape-body" aria-hidden="true"></span><span class="tab-shape-right" aria-hidden="true"></span>PX / REM</button>
+        <button class="tab" data-mode="em" type="button"><span class="tab-shape-left" aria-hidden="true"></span><span class="tab-shape-body" aria-hidden="true"></span><span class="tab-shape-right" aria-hidden="true"></span>REM / EM</button>
+        <button class="tab" data-mode="vw" type="button"><span class="tab-shape-left" aria-hidden="true"></span><span class="tab-shape-body" aria-hidden="true"></span><span class="tab-shape-right" aria-hidden="true"></span>PX / VW</button>
+        <button class="tab" data-mode="vh" type="button"><span class="tab-shape-left" aria-hidden="true"></span><span class="tab-shape-body" aria-hidden="true"></span><span class="tab-shape-right" aria-hidden="true"></span>PX / VH</button>
+        <button class="tab" data-mode="inline" type="button"><span class="tab-shape-left" aria-hidden="true"></span><span class="tab-shape-body" aria-hidden="true"></span><span class="tab-shape-right" aria-hidden="true"></span>CSS / INLINE</button>
+        <button class="tab" data-mode="tailwind" type="button"><span class="tab-shape-left" aria-hidden="true"></span><span class="tab-shape-body" aria-hidden="true"></span><span class="tab-shape-right" aria-hidden="true"></span>CSS / TAILWIND</button>
+      </nav>
+
+      <div class="panel">
+        <div id="unit-view">
+          <div class="conversion-row">
+            <label class="value-block">
+              <span id="left-label">Pixels</span>
+              <span class="input-wrap">
+                <input id="left-value" inputmode="decimal" type="number" step="any" value="16" aria-label="Source value">
+                <b id="left-unit">px</b>
+              </span>
+            </label>
+
+            <button id="swap" class="swap" type="button" aria-label="Swap values"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h15m-4-4 4 4-4 4M20 16H5m4 4-4-4 4-4"/></svg></button>
+
+            <label class="value-block">
+              <span id="right-label">REM</span>
+              <span class="input-wrap">
+                <input id="right-value" inputmode="decimal" type="number" step="any" value="1" aria-label="Converted value">
+                <b id="right-unit">rem</b>
+              </span>
+            </label>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="settings-heading">
+            <div><span>Conversion settings</span><small>Adjust the calculation base</small></div>
+            <button id="copy-result" type="button">Copy result</button>
+          </div>
+          <div id="settings-area" class="settings"></div>
+          <div class="settings settings--precision">
+            <span class="control">Decimal places</span>
+            <div class="presets presets--decimals" role="group" aria-label="Decimal places">
+              <button type="button" class="chip" data-decimals="0">0</button>
+              <button type="button" class="chip" data-decimals="1">1</button>
+              <button type="button" class="chip" data-decimals="2">2</button>
+              <button type="button" class="chip is-active" data-decimals="3">3</button>
+              <button type="button" class="chip" data-decimals="4">4</button>
+            </div>
+          </div>
+          <div class="formula">
+            <span>Formula</span>
+            <code id="formula"></code>
+          </div>
+          <p id="context-line" class="context-line" aria-live="polite"></p>
+        </div>
+
+        <div id="code-view" hidden>
+          <div class="code-row">
+            <label class="value-block">
+              <span id="code-input-label">HTML with &lt;style&gt;</span>
+              <textarea id="code-input" class="code-area" spellcheck="false" autocomplete="off"></textarea>
+            </label>
+            <label class="value-block">
+              <span id="code-output-label">Inlined HTML</span>
+              <textarea id="code-output" class="code-area code-area--output" spellcheck="false" readonly></textarea>
+            </label>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="settings-heading">
+            <div><span id="code-heading">Converter options</span><small id="code-subheading">Output updates as you type</small></div>
+            <button id="copy-code" type="button">Copy result</button>
+          </div>
+          <div class="code-controls">
+            <div id="code-options" class="presets presets--options" role="group" aria-label="Converter options"></div>
+            <div class="code-actions">
+              <button id="code-example" class="detect-button" type="button">Load example</button>
+              <button id="code-clear" class="detect-button" type="button">Clear</button>
+            </div>
+          </div>
+          <p id="code-status" class="context-line" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+    </div>
+
+    <section data-view="tools" class="page" aria-labelledby="tools-title" hidden>
+      <header class="hero">
+        <div class="eyebrow"><span></span> All tools</div>
+        <h1 id="tools-title">Every calculator, in one place</h1>
+        <p>Pick a tool to open it. New calculators land here as they're built.</p>
+      </header>
+      <div id="tool-grid" class="tool-grid"></div>
+    </section>
+
+    <section data-view="about" class="page" aria-labelledby="about-title" hidden>
+      <header class="hero">
+        <div class="eyebrow"><span></span> About</div>
+        <h1 id="about-title">About CSS Toolkit</h1>
+      </header>
+      <article class="about">
+        <p>Hi, I'm <strong>Tathagata Sarkar</strong>, a product designer in Mumbai. I've spent six years designing systems at scale, and I kept doing the same small sums by hand: pixels to rem, viewport maths, turning a CSS snippet into Tailwind classes or email-safe inline styles.</p>
+        <p>So I built the tools I wanted. They're <strong>fast</strong>, <strong>free</strong> and <strong>private</strong>: everything runs in your browser, and nothing you type or paste is uploaded or stored.</p>
+        <p>CSS Toolkit is a growing collection. Every new calculator will appear on the <a href="#/tools">All tools</a> page as soon as it's ready.</p>
+        <p>If a tool saved you some time, you can buy me a coffee. It keeps the tools free and the next ones coming.</p>
+        <a class="coffee-button coffee-button--large" data-coffee href="#" target="_blank" rel="noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5zM16 10h1.5a2.5 2.5 0 0 1 0 5H16M8 3v2M11 3v2M14 3v2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Buy me a coffee <span aria-hidden="true">↗</span></a>
+      </article>
+    </section>
+
+    <footer class="site-footer">
+      <nav aria-label="Footer">
+        <a href="#/">Home</a><i></i><a href="#/tools">All tools</a><i></i><a href="#/about">About</a><i></i><a data-coffee href="#" target="_blank" rel="noreferrer">Buy me a coffee ↗</a>
+      </nav>
+      <p>CSS Toolkit · Made by Tathagata Sarkar</p>
+    </footer>
+  </main>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "name": "css-toolkit",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "dev": "python -m http.server 4173",
+    "build:plugin": "node scripts/build-plugin.mjs",
+    "build": "node scripts/build-site.mjs"
+  }
+}
