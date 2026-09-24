@@ -166,18 +166,27 @@ function updateContext() {
   contextLine.textContent = worked;
 }
 
+// Output wraps only between tokens: each word (a class name, an attribute) is kept whole, since
+// browsers would otherwise break "gap-1" after its hyphen. Very long tokens may still wrap.
+function showOutput(text) {
+  codeOutput.replaceChildren(...text.split(/(\s+)/).filter(Boolean).map(part => {
+    if (/^\s/.test(part) || part.length > 48) return document.createTextNode(part);
+    return Object.assign(document.createElement("span"), { textContent: part });
+  }));
+}
+
 function runTool() {
   const tool = tools[state.mode];
   const input = codeInput.value;
   state.code[state.mode].input = input;
   if (!input.trim()) {
-    codeOutput.value = "";
+    showOutput("");
     codeStatus.textContent = "Paste code on the left, or load an example.";
     return;
   }
   try {
     const { output, status } = tool.run(input, state.code[state.mode].options);
-    codeOutput.value = output;
+    showOutput(output);
     codeStatus.textContent = status;
   } catch (error) {
     codeStatus.textContent = `Could not convert: ${error.message}`;
@@ -271,7 +280,7 @@ $("#code-clear").addEventListener("click", () => {
 });
 const copyCodeButton = $("#copy-code");
 copyCodeButton.addEventListener("click", async () => {
-  await copyText(codeOutput.value);
+  await copyText(codeOutput.textContent);
   copyCodeButton.textContent = "Copied";
   setTimeout(() => copyCodeButton.textContent = "Copy result", 1200);
 });

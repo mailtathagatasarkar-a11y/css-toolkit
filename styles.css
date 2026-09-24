@@ -171,7 +171,8 @@ input::-webkit-inner-spin-button { appearance: none; }
 .code-area { width: 100%; min-height: 300px; resize: vertical; border: 1px solid rgba(255,255,255,.07); border-radius: 13px; background: var(--ink); color: #f5f4ef; padding: 14px 15px; font: 13px/1.55 ui-monospace, "Cascadia Code", Consolas, monospace; tab-size: 2; white-space: pre-wrap; overflow-wrap: anywhere; overflow: auto; outline: 0; box-shadow: inset 0 1px rgba(255,255,255,.04); }
 .code-area:focus { border-color: color-mix(in srgb, var(--input-accent) 55%, transparent); }
 .code-area::placeholder { color: #6c6e71; }
-.code-area--output { color: var(--input-accent); }
+.code-area--output { display: block; color: var(--input-accent); cursor: text; user-select: text; }
+.code-area--output span { white-space: nowrap; }
 .code-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
 .presets--options { display: flex; flex-wrap: wrap; gap: 6px; }
 .presets--options .chip { padding: 0 14px; font-size: 12px; font-weight: 700; }
